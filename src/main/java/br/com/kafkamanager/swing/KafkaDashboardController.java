@@ -53,7 +53,7 @@ public class KafkaDashboardController extends KafkaDashboard {
 
     private void filterTopics() {
         final var filter = txtSearch.getText().toLowerCase();
-        final var filteredTopics = this.listTopics.stream()
+        final var filteredTopics = listTopics.stream()
             .filter(topic -> topic.getName().toLowerCase().contains(filter))
             .distinct()
             .collect(Collectors.toList());
@@ -94,6 +94,7 @@ public class KafkaDashboardController extends KafkaDashboard {
     }
 
     private void createTopic() {
-        //TODO create new topic
+        new KafkaCreateTopicController(this, host);
+        showTopics();
     }
 }
