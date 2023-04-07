@@ -1,2 +1,5 @@
 rootProject.name = 'KafkaManager'
+include 'domain'
+include 'application'
+include 'infrastructure'
 

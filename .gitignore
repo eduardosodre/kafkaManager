@@ -3,3 +3,6 @@
 /gradlew/
 .gradle/
 .idea/
+/domain/build/
+/application/build/
+/infrastructure/build/

@@ -38,8 +38,8 @@ public class KafkaCreateTopicController extends KafkaCreateTopic {
         final int replications = Integer.parseInt(txtReplications.getText().strip());
 
         boolean validate = List.of(ComponentValidator.validate(txtTopicName, FieldType.STRING),
-                ComponentValidator.validate(txtTopicName, FieldType.STRING),
-                ComponentValidator.validate(txtTopicName, FieldType.STRING))
+                ComponentValidator.validate(txtTopicName, FieldType.INTEGER),
+                ComponentValidator.validate(txtTopicName, FieldType.INTEGER))
             .contains(false);
 
         if (!validate) {

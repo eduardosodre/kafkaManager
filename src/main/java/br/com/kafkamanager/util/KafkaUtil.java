@@ -70,7 +70,6 @@ public class KafkaUtil {
             NewTopic newTopic = new NewTopic(topicName, numPartitions, (short) replications);
             adminClient.createTopics(Collections.singleton(newTopic)).all().get();
         }
-        JOptionPane.showMessageDialog(null, "Topic created successfully!");
     }
 
     public static void publish(String bootstrapServers, KafkaProducerDto dto) {
