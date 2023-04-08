@@ -2,19 +2,18 @@ package br.com.kafkamanager.infrastructure.swing;
 
 import br.com.kafkamanager.application.topic.list.ListTopicUseCase;
 import br.com.kafkamanager.domain.topic.Topic;
+import br.com.kafkamanager.infrastructure.util.ContextUtil;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class ViewDashboardController extends ViewDashboard {
 
     private static final String[] COLUMN_NAMES = {"Name", "Partitions", "Count"};
     private static final String NO_TOPIC_SELECTED_MESSAGE = "A topic must be selected in the table.";
-    @Autowired
     private ListTopicUseCase listTopicUseCase;
     private List<Topic> listTopics;
     private DefaultTableModel model;
@@ -22,6 +21,7 @@ public class ViewDashboardController extends ViewDashboard {
 
     public ViewDashboardController() {
         super();
+        listTopicUseCase = ContextUtil.getBean(ListTopicUseCase.class);
         start();
         setVisible(true);
     }

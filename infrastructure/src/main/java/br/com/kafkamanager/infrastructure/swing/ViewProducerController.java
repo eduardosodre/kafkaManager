@@ -7,6 +7,7 @@ import br.com.kafkamanager.domain.message.Message;
 import br.com.kafkamanager.infrastructure.swing.util.HeaderParser;
 import br.com.kafkamanager.infrastructure.swing.util.JFileChooserUtil;
 import br.com.kafkamanager.infrastructure.swing.util.JOptionUtil;
+import br.com.kafkamanager.infrastructure.util.ContextUtil;
 import br.com.kafkamanager.infrastructure.util.JsonUtil;
 import java.awt.Window;
 import java.io.FileNotFoundException;
@@ -15,7 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class ViewProducerController extends ViewProducer {
 
@@ -24,15 +24,15 @@ public class ViewProducerController extends ViewProducer {
     private static final String FILE_SAVED_SUCCESSFULLY_MESSAGE = "A File saved successfully!";
     private static final String COULD_NOT_SAVE_FILE_MESSAGE = "Could not save the file!";
 
-    @Autowired
     private ListTopicUseCase listTopicUseCase;
-    @Autowired
     private CreateMessageUseCase createMessageUseCase;
     private final String topicName;
     private DefaultTableModel model;
 
     public ViewProducerController(Window owner, String topicName) {
         super(owner);
+        listTopicUseCase = ContextUtil.getBean(ListTopicUseCase.class);
+        createMessageUseCase = ContextUtil.getBean(CreateMessageUseCase.class);
         this.topicName = topicName;
         start();
         setVisible(true);

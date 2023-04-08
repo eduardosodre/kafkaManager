@@ -9,7 +9,9 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
+import org.springframework.stereotype.Component;
 
+@Component
 @RequiredArgsConstructor
 public class MessageGatewayImpl implements MessageGateway {
 

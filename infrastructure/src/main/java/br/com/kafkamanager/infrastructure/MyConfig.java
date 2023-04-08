@@ -1,7 +1,5 @@
 package br.com.kafkamanager.infrastructure;
 
-import static org.apache.kafka.clients.admin.AdminClient.create;
-
 import br.com.kafkamanager.application.message.create.CreateMessageUseCase;
 import br.com.kafkamanager.application.topic.create.CreateTopicUseCase;
 import br.com.kafkamanager.application.topic.delete.DeleteTopicUseCase;
@@ -22,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MyConfig {
 
-    @Value("${server}")
+    @Value("${KAFKA_SERVER}")
     private String server;
 
     @Bean
@@ -39,7 +37,7 @@ public class MyConfig {
     public KafkaAdminClient kafkaAdminClient() {
         final var props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, server);
-        return (KafkaAdminClient) create(props);
+        return (KafkaAdminClient) KafkaAdminClient.create(props);
     }
 
     @Bean
@@ -53,23 +51,23 @@ public class MyConfig {
     }
 
     @Bean
-    public CreateTopicUseCase createTopicUseCase() {
-        return new CreateTopicUseCase(topicGateway());
+    public CreateTopicUseCase createTopicUseCase(TopicGateway topicGateway) {
+        return new CreateTopicUseCase(topicGateway);
     }
 
     @Bean
-    public ListTopicUseCase listTopicUseCase() {
-        return new ListTopicUseCase(topicGateway());
+    public ListTopicUseCase listTopicUseCase(TopicGateway topicGateway) {
+        return new ListTopicUseCase(topicGateway);
     }
 
     @Bean
-    public DeleteTopicUseCase deleteTopicUseCase() {
-        return new DeleteTopicUseCase(topicGateway());
+    public DeleteTopicUseCase deleteTopicUseCase(TopicGateway topicGateway) {
+        return new DeleteTopicUseCase(topicGateway);
     }
 
     @Bean
-    public CreateMessageUseCase createMessageUseCase() {
-        return new CreateMessageUseCase(messageGateway());
+    public CreateMessageUseCase createMessageUseCase(MessageGateway messageGateway) {
+        return new CreateMessageUseCase(messageGateway);
     }
 
 }

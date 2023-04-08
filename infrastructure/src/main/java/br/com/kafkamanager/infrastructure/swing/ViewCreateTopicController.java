@@ -4,10 +4,10 @@ import br.com.kafkamanager.application.topic.create.CreateTopicCommand;
 import br.com.kafkamanager.application.topic.create.CreateTopicUseCase;
 import br.com.kafkamanager.infrastructure.swing.util.ComponentValidator;
 import br.com.kafkamanager.infrastructure.swing.util.ComponentValidator.FieldType;
+import br.com.kafkamanager.infrastructure.util.ContextUtil;
 import java.awt.Window;
 import java.util.List;
 import javax.swing.JOptionPane;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class ViewCreateTopicController extends ViewCreateTopic {
 
@@ -15,11 +15,11 @@ public class ViewCreateTopicController extends ViewCreateTopic {
     private static final String TOPIC_CREATED_SUCCESSFULLY_MESSAGE = "A Topic created successfully!";
     private static final String INVALID_FIELD_MESSAGE = "One or more fields are invalid. Please check the values and try again.";
 
-    @Autowired
     private CreateTopicUseCase createTopicUseCase;
 
     public ViewCreateTopicController(Window owner) {
         super(owner);
+        createTopicUseCase = ContextUtil.getBean(CreateTopicUseCase.class);
         start();
         setVisible(true);
     }
