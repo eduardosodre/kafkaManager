@@ -10,13 +10,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CreateTopicUseCase extends UseCase<CreateTopicCommand, Topic> {
 
-    private final TopicGateway topicGateway;
+    private final TopicGateway gateway;
 
     @Override
     public Topic execute(CreateTopicCommand topicCommand) {
         final var notification = Notification.create();
 
-        final var aMember = notification.validate(
+        final var topic = notification.validate(
             () -> Topic.with(topicCommand.getName(), topicCommand.getPartitions(),
                 topicCommand.getReplications()));
 
@@ -24,7 +24,7 @@ public class CreateTopicUseCase extends UseCase<CreateTopicCommand, Topic> {
             notify(notification);
         }
 
-        return topicGateway.create(aMember);
+        return gateway.create(topic);
     }
 
     private void notify(Notification notification) {

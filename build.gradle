@@ -23,7 +23,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
 }
 
-mainClassName = 'br.com.kafkamanager.Main'
+mainClassName = 'br.com.kafkamanager.infrastructure.Main'
 
 run {
     jvmArgs = ['--add-modules', 'java.desktop']

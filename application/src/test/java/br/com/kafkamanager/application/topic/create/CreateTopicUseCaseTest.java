@@ -20,7 +20,7 @@ import org.mockito.Mock;
 class CreateTopicUseCaseTest extends UseCaseTest {
 
     @Mock
-    private TopicGateway topicGateway;
+    private TopicGateway gateway;
 
     @InjectMocks
     private CreateTopicUseCase useCase;
@@ -34,7 +34,7 @@ class CreateTopicUseCaseTest extends UseCaseTest {
         final var aCommand = CreateTopicCommand.of(expectedName, expectedPartitions,
             expectedReplications);
         final var topic = Topic.with(expectedName, expectedPartitions, expectedReplications);
-        when(topicGateway.create(any()))
+        when(gateway.create(any()))
             .thenReturn(topic);
 
         final var actualOutput = useCase.execute(aCommand);
@@ -42,7 +42,7 @@ class CreateTopicUseCaseTest extends UseCaseTest {
         Assertions.assertNotNull(actualOutput);
         Assertions.assertNotNull(actualOutput.getId());
 
-        verify(topicGateway).create(argThat(aTopic ->
+        verify(gateway).create(argThat(aTopic ->
             Objects.nonNull(aTopic.getId())
                 && Objects.equals(expectedName, aTopic.getId().getValue())
                 && Objects.equals(expectedPartitions, aTopic.getPartitions())
@@ -67,6 +67,6 @@ class CreateTopicUseCaseTest extends UseCaseTest {
         Assertions.assertEquals(TopicValidator.TOPIC_PARTITION_LENGTH_ERROR_MESSAGE,
             actualException.getErrors().get(0).getMessage());
 
-        verify(topicGateway, times(0)).create(any());
+        verify(gateway, times(0)).create(any());
     }
 }

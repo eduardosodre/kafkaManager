@@ -1,6 +1,5 @@
 package br.com.kafkamanager.application.topic.list;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -16,25 +15,24 @@ import org.mockito.Mock;
 class ListTopicUseCaseTest extends UseCaseTest {
 
     @Mock
-    private TopicGateway topicGateway;
+    private TopicGateway gateway;
 
     @InjectMocks
     private ListTopicUseCase useCase;
 
     @Test
     void shouldListTopics() {
-        final var server = "localhost";
         final var topics = List.of(
             Topic.with("topic", 1, 1),
             Topic.with("topic 2", 1, 1));
 
-        when(topicGateway.list(any())).thenReturn(topics);
+        when(gateway.list()).thenReturn(topics);
 
-        final var actualOutput = useCase.execute(server);
+        final var actualOutput = useCase.execute();
 
         Assertions.assertNotNull(actualOutput);
         Assertions.assertEquals(topics.size(), actualOutput.size());
 
-        verify(topicGateway).list(server);
+        verify(gateway).list();
     }
 }

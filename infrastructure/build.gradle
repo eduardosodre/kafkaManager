@@ -2,13 +2,27 @@ plugins {
     id 'java'
 }
 
-group 'org.example'
+group 'br.com.kafkamanager'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    implementation(project(":domain"))
+    implementation(project(":application"))
+
+    //Lombok
+    implementation 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+    implementation 'org.apache.kafka:kafka-clients:3.0.0'
+    implementation 'com.google.code.gson:gson:2.8.9'
+
+    implementation 'org.springframework:spring-context:5.3.13'
+
+    testImplementation 'org.mockito:mockito-core:4.1.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:4.1.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
