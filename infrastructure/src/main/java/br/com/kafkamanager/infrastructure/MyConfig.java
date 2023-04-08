@@ -36,14 +36,14 @@ public class MyConfig {
     }
 
     @Bean
-    public KafkaConsumer kafkaConsumer() {
+    public KafkaConsumer<String, String> kafkaConsumer() {
         final var props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, server);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "my-group");
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 
-        return new KafkaConsumer<String, String>(props);
+        return new KafkaConsumer<>(props);
     }
 
     @Bean

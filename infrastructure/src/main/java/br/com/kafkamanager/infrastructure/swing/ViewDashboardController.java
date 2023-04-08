@@ -95,11 +95,17 @@ public class ViewDashboardController extends ViewDashboard {
     }
 
     private void consumer() {
-        //TODO create new consumer
+        final Integer selected = getSelectedRow();
+        if (selected == null) {
+            return;
+        }
+        final var topicName = table.getValueAt(selected, 0).toString();
+        //TODO chamar tela de consulta
+
     }
 
     private void producer() {
-        final Integer selected = getSeletecRow();
+        final Integer selected = getSelectedRow();
         if (selected == null) {
             return;
         }
@@ -107,7 +113,7 @@ public class ViewDashboardController extends ViewDashboard {
         new ViewProducerController(this, topicName);
     }
 
-    private Integer getSeletecRow() {
+    private Integer getSelectedRow() {
         final var selected = table.getSelectedRow();
         if (selected < 0) {
             JOptionPane.showMessageDialog(this, NO_TOPIC_SELECTED_MESSAGE);
@@ -122,7 +128,7 @@ public class ViewDashboardController extends ViewDashboard {
     }
 
     private void deleteTopic() {
-        final Integer selected = getSeletecRow();
+        final Integer selected = getSelectedRow();
         if (selected == null) {
             return;
         }
@@ -131,6 +137,7 @@ public class ViewDashboardController extends ViewDashboard {
         if (confirm) {
             final var topicName = table.getValueAt(selected, 0).toString();
             deleteTopicUseCase.execute(TopicID.from(topicName));
+            showTopics();
         }
     }
 }
