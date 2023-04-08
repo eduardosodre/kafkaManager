@@ -1,7 +1,7 @@
 package br.com.kafkamanager.domain.topic;
 
-import static br.com.kafkamanager.domain.validation.ValidatorConstants.MAX_STRING_LENGTH;
-import static br.com.kafkamanager.domain.validation.ValidatorConstants.MIN_STRING_LENGTH;
+import static br.com.kafkamanager.domain.validation.ValidatorUtil.MAX_STRING_LENGTH;
+import static br.com.kafkamanager.domain.validation.ValidatorUtil.MIN_STRING_LENGTH;
 
 import br.com.kafkamanager.domain.validation.Error;
 import br.com.kafkamanager.domain.validation.ValidationHandler;
@@ -32,14 +32,10 @@ public class TopicValidator extends Validator {
     }
 
     private void checkTopicName() {
-        final var name = this.topic.getId().getValue();
-        if (name == null) {
-            this.validationHandler().append(new Error(TOPIC_NAME_NULL_ERROR_MESSAGE));
-            return;
-        }
+        final var name = topic.getId().getValue();
+        validatorString(name, TOPIC_NAME_NULL_ERROR_MESSAGE, TOPIC_NAME_EMPTY_ERROR_MESSAGE);
 
-        if (name.isBlank()) {
-            this.validationHandler().append(new Error(TOPIC_NAME_EMPTY_ERROR_MESSAGE));
+        if (this.validationHandler().hasError()) {
             return;
         }
 
@@ -51,28 +47,12 @@ public class TopicValidator extends Validator {
     }
 
     private void checkTopicPartitions() {
-        final var partitions = this.topic.getPartitions();
-        if (partitions == null) {
-            this.validationHandler().append(new Error(TOPIC_PARTITION_NULL_ERROR_MESSAGE));
-            return;
-        }
-
-        if (partitions > 10 || partitions < 1) {
-            this.validationHandler()
-                .append(new Error(TOPIC_PARTITION_LENGTH_ERROR_MESSAGE));
-        }
+        validatorInteger(this.topic.getPartitions(), TOPIC_PARTITION_NULL_ERROR_MESSAGE,
+            TOPIC_PARTITION_LENGTH_ERROR_MESSAGE);
     }
 
     private void checkTopicReplications() {
-        final var replications = this.topic.getReplications();
-        if (replications == null) {
-            this.validationHandler().append(new Error(TOPIC_REPLICATION_NULL_ERROR_MESSAGE));
-            return;
-        }
-
-        if (replications > 10 || replications < 1) {
-            this.validationHandler()
-                .append(new Error(TOPIC_REPLICATION_LENGTH_ERROR_MESSAGE));
-        }
+        validatorInteger(this.topic.getReplications(), TOPIC_REPLICATION_NULL_ERROR_MESSAGE,
+            TOPIC_REPLICATION_LENGTH_ERROR_MESSAGE);
     }
 }

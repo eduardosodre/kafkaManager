@@ -1,24 +1,27 @@
-package br.com.kafkamanager.domain.topic;
+package br.com.kafkamanager.domain.message;
 
 import br.com.kafkamanager.domain.Entity;
 import br.com.kafkamanager.domain.exceptions.NotificationException;
 import br.com.kafkamanager.domain.validation.ValidationHandler;
 import br.com.kafkamanager.domain.validation.handler.Notification;
+import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode(callSuper = false)
-public class Topic extends Entity<TopicID> {
+public class Message extends Entity<MessageID> {
 
-    private final Integer partitions;
-    private final Integer replications;
+    private final String topicName;
+    private final String message;
+    private final Map<String, String> headers;
 
-
-    public Topic(TopicID topicID, Integer partitions, Integer replications) {
-        super(topicID);
-        this.partitions = partitions;
-        this.replications = replications;
+    public Message(MessageID messageID, String topicName, String message,
+        Map<String, String> headers) {
+        super(messageID);
+        this.topicName = topicName;
+        this.message = message;
+        this.headers = headers;
         selfValidate();
     }
 
@@ -27,12 +30,12 @@ public class Topic extends Entity<TopicID> {
         validate(notification);
 
         if (notification.hasError()) {
-            throw new NotificationException("Failed to create a Entity Topic", notification);
+            throw new NotificationException("Failed to create a Message", notification);
         }
     }
 
     @Override
     public void validate(final ValidationHandler handler) {
-        new TopicValidator(this, handler).validate();
+        new MessageValidator(this, handler).validate();
     }
 }
