@@ -52,7 +52,6 @@ public class ViewDashboardController extends ViewDashboard {
         final var filter = txtSearch.getText().toLowerCase();
         final var filteredTopics = listTopics.stream()
             .filter(topic -> topic.getId().getValue().toLowerCase().contains(filter))
-            .distinct()
             .collect(Collectors.toList());
         createTable();
         populateTopicTable(filteredTopics);
