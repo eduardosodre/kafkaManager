@@ -3,7 +3,7 @@ package br.com.kafkamanager.infrastructure.swing;
 import br.com.kafkamanager.application.message.create.CreateMessageCommand;
 import br.com.kafkamanager.application.message.create.CreateMessageUseCase;
 import br.com.kafkamanager.application.topic.list.ListTopicUseCase;
-import br.com.kafkamanager.domain.message.Message;
+import br.com.kafkamanager.domain.exceptions.NotificationException;
 import br.com.kafkamanager.infrastructure.swing.util.HeaderParser;
 import br.com.kafkamanager.infrastructure.swing.util.JFileChooserUtil;
 import br.com.kafkamanager.infrastructure.swing.util.JOptionUtil;
@@ -24,6 +24,7 @@ public class ViewProducerController extends ViewProducer {
     private static final String FILE_SAVED_SUCCESSFULLY_MESSAGE = "A File saved successfully!";
     private static final String COULD_NOT_SAVE_FILE_MESSAGE = "Could not save the file!";
     private static final String MESSAGE_CREATED_SUCCESSFULLY = "Message created successfully!";
+    private static final String MESSAGE_CREATED_ERROR = "Could not create the message";
 
     private ListTopicUseCase listTopicUseCase;
     private CreateMessageUseCase createMessageUseCase;
@@ -68,9 +69,13 @@ public class ViewProducerController extends ViewProducer {
     }
 
     private void producer() {
-        createMessageUseCase.execute(buildMessageCommand());
-
-        JOptionPane.showMessageDialog(null, MESSAGE_CREATED_SUCCESSFULLY);
+        try {
+            createMessageUseCase.execute(buildMessageCommand());
+            JOptionPane.showMessageDialog(null, MESSAGE_CREATED_SUCCESSFULLY);
+        } catch (NotificationException e) {
+            JOptionPane.showMessageDialog(null,
+                MESSAGE_CREATED_ERROR + ": " + e.getFormattedErrors());
+        }
     }
 
     private void load() {
@@ -79,9 +84,9 @@ public class ViewProducerController extends ViewProducer {
             return;
         }
         try {
-            final var kafkaProducerDto = JsonUtil.readJsonFile(file, Message.class);
+            final var kafkaProducerDto = JsonUtil.readJsonFile(file, CreateMessageCommand.class);
             comboTopic.setSelectedItem(kafkaProducerDto.getTopicName());
-            txtKey.setText(kafkaProducerDto.getId().getValue());
+            txtKey.setText(kafkaProducerDto.getKey());
             txtValue.setText(kafkaProducerDto.getMessage());
             populateTableWithHeaders(kafkaProducerDto.getHeaders());
         } catch (FileNotFoundException e) {

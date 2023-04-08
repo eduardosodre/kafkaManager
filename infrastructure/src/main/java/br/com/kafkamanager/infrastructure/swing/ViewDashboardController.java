@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import org.apache.kafka.clients.admin.KafkaAdminClient;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 
 public class ViewDashboardController extends ViewDashboard {
@@ -43,8 +44,12 @@ public class ViewDashboardController extends ViewDashboard {
         btnClose.addActionListener(e -> {
             final var kafkaProducer = ContextUtil.getBean(KafkaProducer.class);
             final var kafkaAdminClient = ContextUtil.getBean(KafkaAdminClient.class);
+            final var kafkaConsumer = ContextUtil.getBean(KafkaConsumer.class);
+
             kafkaProducer.close();
             kafkaAdminClient.close();
+            kafkaConsumer.close();
+
             System.exit(0);
         });
         btnConsumer.addActionListener(e -> consumer());
