@@ -19,7 +19,7 @@ class TopicTest {
         final var expectedReplications = 1;
 
         final var actualTopic =
-            new Topic(TopicID.from(expectedName), expectedPartitions, expectedReplications);
+            Topic.with(expectedName, expectedPartitions, expectedReplications);
 
         Assertions.assertNotNull(actualTopic);
         Assertions.assertNotNull(actualTopic.getId());
@@ -28,7 +28,7 @@ class TopicTest {
         Assertions.assertEquals(expectedReplications, actualTopic.getReplications());
     }
 
-    private static Stream<Arguments> invalidInputForUpdateParameterPeriodEffectMethod() {
+    private static Stream<Arguments> invalidTopics() {
         return Stream.of(
             Arguments.of("br", 1, 1, TopicValidator.TOPIC_NAME_LENGTH_ERROR_MESSAGE),
             Arguments.of(null, 1, 1, TopicValidator.TOPIC_NAME_NULL_ERROR_MESSAGE),
@@ -45,12 +45,12 @@ class TopicTest {
     }
 
     @ParameterizedTest
-    @MethodSource("invalidInputForUpdateParameterPeriodEffectMethod")
-    void shouldCreateNewTopicWhenAttributeIsInvalid(String name, Integer partitions,
+    @MethodSource("invalidTopics")
+    void shouldNotCreateNewTopicWhenAttributeIsInvalid(String name, Integer partitions,
         Integer replications, String messageError) {
 
         final var actualException = assertThrows(NotificationException.class,
-            () -> new Topic(TopicID.from(name), partitions, replications));
+            () -> Topic.with(name, partitions, replications));
 
         Assertions.assertTrue(actualException.getErrors().stream()
             .anyMatch(error -> messageError.equalsIgnoreCase(error.getMessage())));

@@ -14,12 +14,15 @@ public class Topic extends Entity<TopicID> {
     private final Integer partitions;
     private final Integer replications;
 
-
-    public Topic(TopicID topicID, Integer partitions, Integer replications) {
+    private Topic(TopicID topicID, Integer partitions, Integer replications) {
         super(topicID);
         this.partitions = partitions;
         this.replications = replications;
         selfValidate();
+    }
+
+    public static Topic with(String topicName, Integer partitions, Integer replications) {
+        return new Topic(TopicID.from(topicName), partitions, replications);
     }
 
     private void selfValidate() {

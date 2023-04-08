@@ -12,7 +12,7 @@ public class TopicID extends Identifier {
 
     private final String value;
 
-    public static TopicID from(final String anId) {
-        return new TopicID(anId);
+    public static TopicID from(final String value) {
+        return new TopicID(value);
     }
 }

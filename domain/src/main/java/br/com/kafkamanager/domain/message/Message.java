@@ -16,13 +16,18 @@ public class Message extends Entity<MessageID> {
     private final String message;
     private final Map<String, String> headers;
 
-    public Message(MessageID messageID, String topicName, String message,
+    private Message(MessageID messageID, String topicName, String message,
         Map<String, String> headers) {
         super(messageID);
         this.topicName = topicName;
         this.message = message;
         this.headers = headers;
         selfValidate();
+    }
+
+    public static Message with(String key, String topicName, String message,
+        Map<String, String> headers) {
+        return new Message(MessageID.from(key), topicName, message, headers);
     }
 
     private void selfValidate() {

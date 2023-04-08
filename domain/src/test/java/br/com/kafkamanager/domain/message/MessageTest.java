@@ -29,8 +29,7 @@ class MessageTest {
         final var expectedHeaders = new HashMap<String, String>();
 
         final var actualMessage =
-            new Message(MessageID.from(expectedKey), expectedTopicName, expectedMessage,
-                expectedHeaders);
+            Message.with(expectedKey, expectedTopicName, expectedMessage, expectedHeaders);
 
         Assertions.assertNotNull(actualMessage);
         Assertions.assertNotNull(actualMessage.getId());
@@ -40,7 +39,7 @@ class MessageTest {
         Assertions.assertEquals(expectedHeaders, actualMessage.getHeaders());
     }
 
-    private static Stream<Arguments> invalidInputForUpdateParameterPeriodEffectMethod() {
+    private static Stream<Arguments> invalidMessages() {
         final var headers = new HashMap<String, String>();
         headers.put("Invalid", "test");
         return Stream.of(
@@ -61,13 +60,12 @@ class MessageTest {
     }
 
     @ParameterizedTest
-    @MethodSource("invalidInputForUpdateParameterPeriodEffectMethod")
-    void shouldCreateNewMessageWhenAttributeIsInvalid(String key, String topic, String message,
+    @MethodSource("invalidMessages")
+    void shouldNotCreateNewMessageWhenAttributeIsInvalid(String key, String topic, String message,
         HashMap<String, String> headers, String messageError) {
 
-        final var messageID = MessageID.from(key);
         final var actualException = assertThrows(NotificationException.class,
-            () -> new Message(messageID, topic, message, headers));
+            () -> Message.with(key, topic, message, headers));
 
         Assertions.assertTrue(actualException.getErrors().stream()
             .anyMatch(error -> messageError.equalsIgnoreCase(error.getMessage())));

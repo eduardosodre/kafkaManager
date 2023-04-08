@@ -12,7 +12,7 @@ public class MessageID extends Identifier {
 
     private final String value;
 
-    public static MessageID from(final String anId) {
-        return new MessageID(anId);
+    public static MessageID from(final String value) {
+        return new MessageID(value);
     }
 }

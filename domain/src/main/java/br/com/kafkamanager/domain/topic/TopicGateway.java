@@ -8,7 +8,5 @@ public interface TopicGateway {
 
     void deleteById(TopicID topicID);
 
-    List<Topic> list();
-
-    List<Topic> list(String filter);
+    List<Topic> list(String server);
 }
