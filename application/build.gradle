@@ -1,8 +1,10 @@
 plugins {
     id 'java'
+    id 'jacoco'
 }
 
 group 'br.com.kafkamanager'
+sourceCompatibility = 11
 
 repositories {
     mavenCentral()
@@ -22,6 +24,21 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
 
+jacoco {
+    toolVersion = "0.8.7"
+    reportsDir = file("$buildDir/jacoco")
+}
+
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        html.enabled true
+    }
+}
+
+build.finalizedBy jacocoTestReport

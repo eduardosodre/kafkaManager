@@ -23,6 +23,7 @@ public class ViewProducerController extends ViewProducer {
     private static final String COULD_NOT_LOAD_FILE_MESSAGE = "Could not load the file";
     private static final String FILE_SAVED_SUCCESSFULLY_MESSAGE = "A File saved successfully!";
     private static final String COULD_NOT_SAVE_FILE_MESSAGE = "Could not save the file!";
+    private static final String MESSAGE_CREATED_SUCCESSFULLY = "Message created successfully!";
 
     private ListTopicUseCase listTopicUseCase;
     private CreateMessageUseCase createMessageUseCase;
@@ -68,6 +69,8 @@ public class ViewProducerController extends ViewProducer {
 
     private void producer() {
         createMessageUseCase.execute(buildMessageCommand());
+
+        JOptionPane.showMessageDialog(null, MESSAGE_CREATED_SUCCESSFULLY);
     }
 
     private void load() {

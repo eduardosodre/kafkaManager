@@ -3,7 +3,7 @@ package br.com.kafkamanager.application.topic.delete;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
-import br.com.kafkamanager.application.topic.UseCaseTest;
+import br.com.kafkamanager.application.UseCaseTest;
 import br.com.kafkamanager.domain.topic.TopicGateway;
 import br.com.kafkamanager.domain.topic.TopicID;
 import org.junit.jupiter.api.Test;

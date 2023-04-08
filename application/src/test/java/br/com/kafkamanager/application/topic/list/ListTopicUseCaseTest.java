@@ -3,7 +3,7 @@ package br.com.kafkamanager.application.topic.list;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import br.com.kafkamanager.application.topic.UseCaseTest;
+import br.com.kafkamanager.application.UseCaseTest;
 import br.com.kafkamanager.domain.topic.Topic;
 import br.com.kafkamanager.domain.topic.TopicGateway;
 import java.util.List;

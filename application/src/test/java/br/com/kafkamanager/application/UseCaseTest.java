@@ -1,4 +1,4 @@
-package br.com.kafkamanager.application.topic;
+package br.com.kafkamanager.application;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
