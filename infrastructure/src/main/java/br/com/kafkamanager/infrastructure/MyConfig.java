@@ -16,6 +16,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 
 @Configuration
 public class MyConfig {
@@ -24,6 +25,7 @@ public class MyConfig {
     private String server;
 
     @Bean
+    @Scope("prototype")
     public KafkaProducer<String, String> kafkaProducer() {
         final var props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, server);
@@ -34,6 +36,7 @@ public class MyConfig {
     }
 
     @Bean
+    @Scope("prototype")
     public KafkaAdminClient kafkaAdminClient() {
         final var props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, server);

@@ -36,6 +36,7 @@ public class MessageGatewayImpl implements MessageGateway {
         final var producerRecord = new ProducerRecord<>(topicName, null, null, key,
             messageContent, headerList);
         kafkaProducer.send(producerRecord);
+        kafkaProducer.close();
         return message;
     }
 }

@@ -24,12 +24,14 @@ public class TopicGatewayImpl implements TopicGateway {
         final var newTopic = new NewTopic(topic.getId().getValue(),
             topic.getPartitions(), (short) topic.getReplications().intValue());
         kafkaAdminClient.createTopics(Collections.singleton(newTopic));
+        kafkaAdminClient.close();
         return topic;
     }
 
     @Override
     public void deleteById(TopicID topicID) {
         kafkaAdminClient.deleteTopics(Collections.singleton(topicID.getValue()));
+        kafkaAdminClient.close();
     }
 
     @Override
@@ -46,6 +48,7 @@ public class TopicGatewayImpl implements TopicGateway {
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }
+        kafkaAdminClient.close();
         return topics;
     }
 }
