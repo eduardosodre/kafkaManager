@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.clients.admin.DeleteTopicsOptions;
 import org.apache.kafka.clients.admin.KafkaAdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.admin.TopicListing;
@@ -29,7 +30,15 @@ public class TopicGatewayImpl implements TopicGateway {
 
     @Override
     public void deleteById(TopicID topicID) {
-        kafkaAdminClient.deleteTopics(Collections.singleton(topicID.getValue()));
+        final var deleteTopics = kafkaAdminClient.deleteTopics(
+            Collections.singleton(topicID.getValue()), new DeleteTopicsOptions());
+        try {
+            deleteTopics.all().get();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

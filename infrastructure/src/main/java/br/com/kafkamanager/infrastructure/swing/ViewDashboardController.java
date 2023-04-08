@@ -50,7 +50,7 @@ public class ViewDashboardController extends ViewDashboard {
         btnConsumer.addActionListener(e -> consumer());
         btnCreateTopic.addActionListener(e -> createTopic());
         btnProducer.addActionListener(e -> producer());
-        btnProducer.addActionListener(e -> deleteTopic());
+        btnDeleteTopic.addActionListener(e -> deleteTopic());
     }
 
     private void setupSearch() {
