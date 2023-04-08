@@ -21,6 +21,7 @@ public class ViewDashboard extends JFrame {
     protected JButton btnCreateTopic;
     protected JPanel panel;
     protected JTextField txtSearch;
+    protected JButton btnDeleteTopic;
 
     public ViewDashboard() {
         super();
@@ -108,6 +109,7 @@ public class ViewDashboard extends JFrame {
             panel.add(getBtnConsumer());
             panel.add(getBtnCreateTopic());
             panel.add(getBtnClose());
+            panel.add(getBtnDeleteTopic());
         }
         return panel;
     }
@@ -119,5 +121,13 @@ public class ViewDashboard extends JFrame {
             txtSearch.setColumns(10);
         }
         return txtSearch;
+    }
+
+    private JButton getBtnDeleteTopic() {
+        if (btnDeleteTopic == null) {
+            btnDeleteTopic = new JButton("Delete Topic");
+            btnDeleteTopic.setBounds(459, 0, 139, 40);
+        }
+        return btnDeleteTopic;
     }
 }
