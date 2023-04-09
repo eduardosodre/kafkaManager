@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import br.com.kafkamanager.domain.message.Message;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,10 +22,13 @@ class MessageGatewayImplTest {
     @Mock
     private KafkaProducer<String, String> kafkaProducer;
 
+    @Mock
+    private KafkaConsumer<String, String> kafkaConsumer;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        gateway = new MessageGatewayImpl(kafkaProducer);
+        gateway = new MessageGatewayImpl(kafkaProducer, kafkaConsumer);
     }
 
     @Test
