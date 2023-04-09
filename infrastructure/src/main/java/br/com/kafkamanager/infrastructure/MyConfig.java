@@ -1,6 +1,7 @@
 package br.com.kafkamanager.infrastructure;
 
 import br.com.kafkamanager.application.message.create.CreateMessageUseCase;
+import br.com.kafkamanager.application.message.list.ListMessageUseCase;
 import br.com.kafkamanager.application.topic.create.CreateTopicUseCase;
 import br.com.kafkamanager.application.topic.delete.DeleteTopicUseCase;
 import br.com.kafkamanager.application.topic.list.ListTopicUseCase;
@@ -81,6 +82,11 @@ public class MyConfig {
     @Bean
     public CreateMessageUseCase createMessageUseCase(MessageGateway messageGateway) {
         return new CreateMessageUseCase(messageGateway);
+    }
+
+    @Bean
+    public ListMessageUseCase listMessageUseCase(MessageGateway messageGateway) {
+        return new ListMessageUseCase(messageGateway);
     }
 
 }

@@ -100,8 +100,9 @@ public class ViewDashboardController extends ViewDashboard {
             return;
         }
         final var topicName = table.getValueAt(selected, 0).toString();
-        //TODO chamar tela de consulta
-
+        listTopics.stream()
+            .filter(topic -> topic.getId().getValue().equalsIgnoreCase(topicName)).findFirst()
+            .ifPresent(topic -> new ViewConsumerController(this, topic));
     }
 
     private void producer() {

@@ -51,10 +51,10 @@ public class MessageGatewayImpl implements MessageGateway {
     public List<Message> list(MessageFilter filter) {
         final var list = new ArrayList<Message>();
 
-        TopicPartition partition = new TopicPartition(filter.getTopicName(),
+        final var partition = new TopicPartition(filter.getTopicName(),
             filter.getPartitionNumber());
 
-        List<TopicPartition> partitions = Arrays.asList(partition);
+        final var partitions = Arrays.asList(partition);
         consumer.assign(partitions);
         consumer.seek(partition, filter.getOffset());
 
@@ -63,7 +63,8 @@ public class MessageGatewayImpl implements MessageGateway {
         while (true) {
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
             for (ConsumerRecord<String, String> record : records) {
-                Message message = Message.with(record.key(), filter.getTopicName(), record.value(),
+                final var message = Message.with(record.key(), filter.getTopicName(),
+                    record.value(),
                     null);
                 list.add(message);
                 count++;
