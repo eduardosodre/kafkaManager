@@ -1,5 +1,27 @@
-# kafkaManager
-This project is a tool to facilitate the use of Kafka.
+# KafkaManager
 
-Initially, I created a very simple structure to create topics and produce messages in those topics. 
-Now, I'm going to structure the project to follow the Clean Architecture pattern.
+KafkaManager is a tool designed to simplify the usage of Kafka. Initially, it provided a simple
+structure to create topics and produce messages in those topics. Now, the project has been
+structured following the Clean Architecture pattern.
+
+### Usage
+
+To test the project, run the command
+
+```
+./gradlew clean build
+```
+
+This will generate a file
+named `KafkaManager-1.0-SNAPSHOT-all.jar` in the `build/libs` directory.
+
+To execute the project, run the command
+
+```
+java -jar KafkaManager-1.0-SNAPSHOT-all.jar
+```
+
+## Conclusion
+
+KafkaManager is a simple tool that can help users interact with Kafka. Its Clean Architecture
+structure allows for easy maintenance and scalability.
