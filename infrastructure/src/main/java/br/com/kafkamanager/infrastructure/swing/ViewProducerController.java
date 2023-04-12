@@ -7,6 +7,7 @@ import br.com.kafkamanager.domain.exceptions.NotificationException;
 import br.com.kafkamanager.infrastructure.swing.util.HeaderParser;
 import br.com.kafkamanager.infrastructure.swing.util.JFileChooserUtil;
 import br.com.kafkamanager.infrastructure.swing.util.JOptionUtil;
+import br.com.kafkamanager.infrastructure.swing.util.JSONColorizer;
 import br.com.kafkamanager.infrastructure.util.ContextUtil;
 import br.com.kafkamanager.infrastructure.util.JsonUtil;
 import java.awt.Window;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JOptionPane;
+import javax.swing.JTextPane;
 import javax.swing.table.DefaultTableModel;
 
 public class ViewProducerController extends ViewProducer {
@@ -26,8 +28,8 @@ public class ViewProducerController extends ViewProducer {
     private static final String MESSAGE_CREATED_SUCCESSFULLY = "Message created successfully!";
     private static final String MESSAGE_CREATED_ERROR = "Could not create the message";
 
-    private ListTopicUseCase listTopicUseCase;
-    private CreateMessageUseCase createMessageUseCase;
+    private final ListTopicUseCase listTopicUseCase;
+    private final CreateMessageUseCase createMessageUseCase;
     private final String topicName;
     private DefaultTableModel model;
 
@@ -61,6 +63,20 @@ public class ViewProducerController extends ViewProducer {
         btnPlus.addActionListener(e -> plus());
         btnSubtract.addActionListener(e -> subtract());
         btnImportHeaderKafdrop.addActionListener(e -> importHeaderKafrop());
+        btnFormatter.addActionListener(e -> {
+            txtValue.setText(JsonUtil.format(txtValue.getText()));
+            try {
+                colorize(txtValue);
+            } catch (Exception error) {
+
+            }
+        });
+    }
+
+    private void colorize(JTextPane editorPane) {
+        JSONColorizer jsonColorizer = new JSONColorizer(editorPane);
+        jsonColorizer.clearErrorHighLight();
+        jsonColorizer.colorize();
     }
 
     private void createTable() {

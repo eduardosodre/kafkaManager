@@ -9,4 +9,8 @@ public interface TopicGateway {
     void deleteById(TopicID topicID);
 
     List<Topic> list();
+
+    Long getLastOffset(Topic topic, int partition);
+
+    Long getFirstOffset(Topic topic, int partition);
 }

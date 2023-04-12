@@ -14,6 +14,8 @@ import org.apache.kafka.clients.admin.KafkaAdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.clients.admin.TopicListing;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.TopicPartition;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Component;
 public class TopicGatewayImpl implements TopicGateway {
 
     private final KafkaAdminClient kafkaAdminClient;
+    private final KafkaConsumer<String, String> kafkaConsumer;
 
     @Override
     public Topic create(Topic topic) {
@@ -74,5 +77,21 @@ public class TopicGatewayImpl implements TopicGateway {
             throw new RuntimeException(e);
         }
         return topics;
+    }
+
+    @Override
+    public Long getLastOffset(Topic topic, int partition) {
+        TopicPartition topicPartition = new TopicPartition(topic.getId().getValue(), partition);
+        kafkaConsumer.assign(Collections.singleton(topicPartition));
+        kafkaConsumer.seekToEnd(Collections.singleton(topicPartition));
+        return kafkaConsumer.position(topicPartition);
+    }
+
+    @Override
+    public Long getFirstOffset(Topic topic, int partition) {
+        TopicPartition topicPartition = new TopicPartition(topic.getId().getValue(), partition);
+        kafkaConsumer.assign(Collections.singleton(topicPartition));
+        kafkaConsumer.seekToBeginning(Collections.singleton(topicPartition));
+        return kafkaConsumer.position(topicPartition);
     }
 }

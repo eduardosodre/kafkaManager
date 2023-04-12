@@ -34,6 +34,7 @@ public class ViewProducer extends JDialog {
     protected JButton btnPlus;
     protected JButton btnSubtract;
     protected JButton btnImportHeaderKafdrop;
+    protected JButton btnFormatter;
     protected JPanel panel;
     protected JTabbedPane tabbedPane;
     protected JScrollPane scrollPaneValue;
@@ -65,6 +66,7 @@ public class ViewProducer extends JDialog {
             jContentPane.add(getBtnPlus());
             jContentPane.add(getBtnSubtract());
             jContentPane.add(getBtnImportHeaderKafdrop());
+            jContentPane.add(getBtnFormatter());
             jContentPane.add(getPanel());
             jContentPane.add(getTabbedPane());
 
@@ -185,6 +187,14 @@ public class ViewProducer extends JDialog {
             btnImportHeaderKafdrop.setBounds(119, 157, 240, 21);
         }
         return btnImportHeaderKafdrop;
+    }
+
+    private JButton getBtnFormatter() {
+        if (btnFormatter == null) {
+            btnFormatter = new JButton("Formatter value");
+            btnFormatter.setBounds(363, 157, 240, 21);
+        }
+        return btnFormatter;
     }
 
     private JPanel getPanel() {

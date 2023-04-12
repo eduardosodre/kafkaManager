@@ -5,6 +5,9 @@ import br.com.kafkamanager.domain.message.MessageFilter;
 import br.com.kafkamanager.domain.message.MessageGateway;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -60,6 +63,8 @@ public class MessageGatewayImpl implements MessageGateway {
         consumer.assign(partitions);
         consumer.seek(partition, filter.getOffset());
 
+        long limit = filter.getOffset() + filter.getLimit();
+
         long count = 0;
 
         while (true) {
@@ -74,12 +79,14 @@ public class MessageGatewayImpl implements MessageGateway {
 
                 final var message = Message.with(record.key(), filter.getTopicName(),
                     record.value(),
-                    headersMap);
+                    headersMap,
+                    LocalDateTime.ofInstant(Instant.ofEpochMilli(record.timestamp()),
+                        ZoneId.systemDefault()));
                 list.add(message);
                 count++;
             }
 
-            if (count >= filter.getLimit() || records.isEmpty()) {
+            if (count >= limit || records.isEmpty()) {
                 break;
             }
         }

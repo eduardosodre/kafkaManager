@@ -30,6 +30,7 @@ public class ViewConsumer extends JDialog {
     protected JScrollPane scrolMessage;
     protected JTextPane txtHeaders;
     protected JTextPane txtMessage;
+    protected JLabel lbOffset;
 
     public ViewConsumer(Window window) {
         super(window);
@@ -57,7 +58,7 @@ public class ViewConsumer extends JDialog {
             jContentPane.add(getTxtOffset());
             jContentPane.add(getScrollHeader());
             jContentPane.add(getScrollMessage());
-
+            jContentPane.add(getLbOffset());
         }
         return jContentPane;
     }
@@ -133,6 +134,15 @@ public class ViewConsumer extends JDialog {
             txtOffset.setText("0");
         }
         return txtOffset;
+    }
+
+    private JLabel getLbOffset() {
+        if (lbOffset == null) {
+            lbOffset = new JLabel();
+            lbOffset.setBounds(380, 15, 200, 30);
+            lbOffset.setText("0");
+        }
+        return lbOffset;
     }
 
     private JScrollPane getScrollHeader() {

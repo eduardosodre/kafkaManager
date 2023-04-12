@@ -5,6 +5,8 @@ import br.com.kafkamanager.application.message.list.ListMessageUseCase;
 import br.com.kafkamanager.application.topic.create.CreateTopicUseCase;
 import br.com.kafkamanager.application.topic.delete.DeleteTopicUseCase;
 import br.com.kafkamanager.application.topic.list.ListTopicUseCase;
+import br.com.kafkamanager.application.topic.offset.GetFirstOffsetTopicUseCase;
+import br.com.kafkamanager.application.topic.offset.GetLastOffsetTopicUseCase;
 import br.com.kafkamanager.domain.message.MessageGateway;
 import br.com.kafkamanager.domain.topic.TopicGateway;
 import br.com.kafkamanager.infrastructure.message.MessageGatewayImpl;
@@ -56,7 +58,7 @@ public class MyConfig {
 
     @Bean
     public TopicGateway topicGateway() {
-        return new TopicGatewayImpl(kafkaAdminClient());
+        return new TopicGatewayImpl(kafkaAdminClient(), kafkaConsumer());
     }
 
     @Bean
@@ -87,6 +89,16 @@ public class MyConfig {
     @Bean
     public ListMessageUseCase listMessageUseCase(MessageGateway messageGateway) {
         return new ListMessageUseCase(messageGateway);
+    }
+
+    @Bean
+    public GetLastOffsetTopicUseCase getLastOffsetTopicUseCase(TopicGateway gateway) {
+        return new GetLastOffsetTopicUseCase(gateway);
+    }
+
+    @Bean
+    public GetFirstOffsetTopicUseCase getFirstOffsetTopicUseCase(TopicGateway gateway) {
+        return new GetFirstOffsetTopicUseCase(gateway);
     }
 
 }

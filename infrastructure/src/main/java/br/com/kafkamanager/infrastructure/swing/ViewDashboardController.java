@@ -20,8 +20,8 @@ public class ViewDashboardController extends ViewDashboard {
 
     private static final String[] COLUMN_NAMES = {"Name", "Partitions", "Count"};
     private static final String NO_TOPIC_SELECTED_MESSAGE = "A topic must be selected in the table.";
-    private ListTopicUseCase listTopicUseCase;
-    private DeleteTopicUseCase deleteTopicUseCase;
+    private final ListTopicUseCase listTopicUseCase;
+    private final DeleteTopicUseCase deleteTopicUseCase;
     private List<Topic> listTopics;
     private DefaultTableModel model;
 
@@ -85,6 +85,10 @@ public class ViewDashboardController extends ViewDashboard {
     private void createTable() {
         model = new DefaultTableModel(COLUMN_NAMES, 0);
         table.setModel(model);
+
+        table.getColumnModel().getColumn(0).setPreferredWidth(400);
+        table.getColumnModel().getColumn(1).setPreferredWidth(80);
+        table.getColumnModel().getColumn(2).setPreferredWidth(80);
     }
 
     private void populateTopicTable(List<Topic> listKafka) {

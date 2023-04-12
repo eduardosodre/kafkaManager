@@ -28,8 +28,12 @@ public class JsonUtil {
     }
 
     public static String format(String jsonString) {
-        JsonElement je = JsonParser.parseString(jsonString);
-        Gson gsonPretty = new GsonBuilder().setPrettyPrinting().create();
-        return gsonPretty.toJson(je);
+        try {
+            JsonElement je = JsonParser.parseString(jsonString);
+            Gson gsonPretty = new GsonBuilder().setPrettyPrinting().create();
+            return gsonPretty.toJson(je);
+        } catch (Exception e) {
+            return jsonString;
+        }
     }
 }
