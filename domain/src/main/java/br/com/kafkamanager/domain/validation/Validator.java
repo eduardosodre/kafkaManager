@@ -34,7 +34,7 @@ public abstract class Validator {
             return;
         }
 
-        if (integer > 10 || integer < 1) {
+        if (integer > 100 || integer < 1) {
             this.validationHandler()
                 .append(new Error(topicPartitionLengthErrorMessage));
         }

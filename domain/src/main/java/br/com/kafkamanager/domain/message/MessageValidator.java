@@ -58,12 +58,11 @@ public class MessageValidator extends Validator {
         }
 
         headers.forEach((key, value) -> {
-            if (!key.matches("^[a-z_][a-z0-9_]*$")) {
+            if (!key.matches("^[a-z0-9_-]+$")) {
                 this.validationHandler().append(new Error(HEADER_KEY_INVALID_ERROR_MESSAGE));
                 return;
             }
         });
     }
-
 
 }

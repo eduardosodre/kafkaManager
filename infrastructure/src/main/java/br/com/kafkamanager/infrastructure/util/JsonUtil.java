@@ -2,6 +2,8 @@ package br.com.kafkamanager.infrastructure.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -23,5 +25,11 @@ public class JsonUtil {
         final var gson = new Gson();
         final var reader = new FileReader(filename);
         return gson.fromJson(reader, type);
+    }
+
+    public static String format(String jsonString) {
+        JsonElement je = JsonParser.parseString(jsonString);
+        Gson gsonPretty = new GsonBuilder().setPrettyPrinting().create();
+        return gsonPretty.toJson(je);
     }
 }

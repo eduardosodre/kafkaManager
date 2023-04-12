@@ -3,11 +3,13 @@ package br.com.kafkamanager.infrastructure.message;
 import br.com.kafkamanager.domain.message.Message;
 import br.com.kafkamanager.domain.message.MessageFilter;
 import br.com.kafkamanager.domain.message.MessageGateway;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -63,9 +65,16 @@ public class MessageGatewayImpl implements MessageGateway {
         while (true) {
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
             for (ConsumerRecord<String, String> record : records) {
+
+                final var headersMap = Arrays.stream(record.headers().toArray())
+                    .collect(Collectors.toMap(
+                        Header::key,
+                        header -> new String(header.value(), StandardCharsets.UTF_8)
+                    ));
+
                 final var message = Message.with(record.key(), filter.getTopicName(),
                     record.value(),
-                    null);
+                    headersMap);
                 list.add(message);
                 count++;
             }

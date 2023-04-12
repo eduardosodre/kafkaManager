@@ -4,24 +4,22 @@ import br.com.kafkamanager.application.message.list.ListMessageUseCase;
 import br.com.kafkamanager.domain.message.Message;
 import br.com.kafkamanager.domain.message.MessageFilter;
 import br.com.kafkamanager.domain.topic.Topic;
+import br.com.kafkamanager.infrastructure.swing.util.HeaderParser;
+import br.com.kafkamanager.infrastructure.swing.util.JSONColorizer;
 import br.com.kafkamanager.infrastructure.util.ContextUtil;
-import java.awt.Toolkit;
+import br.com.kafkamanager.infrastructure.util.JsonUtil;
 import java.awt.Window;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.List;
-import javax.swing.JLabel;
+import javax.swing.JTextPane;
 import javax.swing.table.DefaultTableModel;
 
 public class ViewConsumerController extends ViewConsumer {
 
     private static final String[] COLUMN_NAMES = {"Key", "Headers", "Message"};
     private final Topic topic;
-    private ListMessageUseCase listMessageUseCase;
+    private final ListMessageUseCase listMessageUseCase;
     private DefaultTableModel model;
 
     public ViewConsumerController(Window owner, Topic topic) {
@@ -62,26 +60,19 @@ public class ViewConsumerController extends ViewConsumer {
                 if (selectedRow != -1) {
                     final var headers = table.getValueAt(selectedRow, 1).toString();
                     final var message = table.getValueAt(selectedRow, 2).toString();
-                    lbHeaders.setText(headers);
-                    lbMessage.setText(message);
+                    txtHeaders.setText(headers);
+                    txtMessage.setText(JsonUtil.format(message));
+
+                    colorize(txtMessage);
                 }
             }
         });
-
-        copyClipboard(lbMessage);
-        copyClipboard(lbHeaders);
     }
 
-    private void copyClipboard(JLabel label) {
-        label.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    StringSelection stringSelection = new StringSelection(label.getText());
-                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                    clipboard.setContents(stringSelection, null);
-                }
-            }
-        });
+    private void colorize(JTextPane editorPane) {
+        JSONColorizer jsonColorizer = new JSONColorizer(editorPane);
+        jsonColorizer.clearErrorHighLight();
+        jsonColorizer.colorize();
     }
 
     private void createTable() {
@@ -102,7 +93,7 @@ public class ViewConsumerController extends ViewConsumer {
     private void populateMessageTable(List<Message> listMessages) {
         createTable();
         listMessages.forEach(message -> model.addRow(
-            new Object[]{message.getId().getValue(), message.getHeaders().toString(),
+            new Object[]{message.getId().getValue(), HeaderParser.mapToString(message.getHeaders()),
                 message.getMessage()}));
     }
 }

@@ -6,11 +6,13 @@ import br.com.kafkamanager.domain.topic.TopicID;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.DeleteTopicsOptions;
 import org.apache.kafka.clients.admin.KafkaAdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.clients.admin.TopicListing;
 import org.springframework.stereotype.Component;
 
@@ -44,11 +46,27 @@ public class TopicGatewayImpl implements TopicGateway {
     @Override
     public List<Topic> list() {
         final var listTopicsResult = kafkaAdminClient.listTopics();
-
-        final var topics = new ArrayList<Topic>();
+        final var topicNames = new ArrayList<String>();
         try {
             for (TopicListing topicListing : listTopicsResult.listings().get()) {
-                topics.add(Topic.with(topicListing.name(), 1, 1));
+                topicNames.add(topicListing.name());
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+
+        final var describeTopicsResult = kafkaAdminClient.describeTopics(topicNames);
+        final var topics = new ArrayList<Topic>();
+        try {
+            for (Map.Entry<String, TopicDescription> entry : describeTopicsResult.all().get()
+                .entrySet()) {
+                final var topicName = entry.getKey();
+                final var topicDescription = entry.getValue();
+                final var numPartitions = topicDescription.partitions().size();
+                final var numReplicas = topicDescription.partitions().get(0).replicas().size();
+                topics.add(Topic.with(topicName, numPartitions, numReplicas));
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);

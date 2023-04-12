@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.border.TitledBorder;
 
 public class ViewConsumer extends JDialog {
@@ -25,17 +26,18 @@ public class ViewConsumer extends JDialog {
     protected JComboBox<String> txtPartition;
     protected JLabel lblOffset;
     protected JTextField txtOffset;
-    protected JLabel lbHeaders;
-    protected JLabel lbMessage;
+    protected JScrollPane scrolHeader;
+    protected JScrollPane scrolMessage;
+    protected JTextPane txtHeaders;
+    protected JTextPane txtMessage;
 
     public ViewConsumer(Window window) {
         super(window);
         initialize();
-        setVisible(true);
     }
 
     private void initialize() {
-        this.setSize(915, 543);
+        this.setSize(965, 699);
         this.setTitle("Kafka Consumer");
         this.setContentPane(getJContentPane());
         this.setResizable(false);
@@ -53,8 +55,8 @@ public class ViewConsumer extends JDialog {
             jContentPane.add(getTxtPartition());
             jContentPane.add(getLblOffset());
             jContentPane.add(getTxtOffset());
-            jContentPane.add(getLbHeaders());
-            jContentPane.add(getLbMessage());
+            jContentPane.add(getScrollHeader());
+            jContentPane.add(getScrollMessage());
 
         }
         return jContentPane;
@@ -63,7 +65,7 @@ public class ViewConsumer extends JDialog {
     private JScrollPane getScrollPane() {
         if (scrollPane == null) {
             scrollPane = new JScrollPane();
-            scrollPane.setBounds(10, 55, 881, 242);
+            scrollPane.setBounds(10, 55, 931, 242);
             scrollPane.setViewportView(getTable());
             scrollPane.setBorder(
                 new TitledBorder(null, "Topics", TitledBorder.LEADING, TitledBorder.TOP,
@@ -82,7 +84,7 @@ public class ViewConsumer extends JDialog {
     private JButton getBtnClose() {
         if (btnClose == null) {
             btnClose = new JButton("Close");
-            btnClose.setBounds(730, 0, 151, 40);
+            btnClose.setBounds(780, 0, 151, 40);
         }
         return btnClose;
     }
@@ -90,7 +92,7 @@ public class ViewConsumer extends JDialog {
     private JPanel getPanel() {
         if (panel == null) {
             panel = new JPanel();
-            panel.setBounds(10, 455, 881, 41);
+            panel.setBounds(10, 600, 931, 41);
             panel.setLayout(null);
             panel.add(getBtnClose());
         }
@@ -133,25 +135,43 @@ public class ViewConsumer extends JDialog {
         return txtOffset;
     }
 
-    private JLabel getLbHeaders() {
-        if (lbHeaders == null) {
-            lbHeaders = new JLabel("New label");
-            lbHeaders.setBounds(10, 302, 881, 58);
-            lbHeaders.setBorder(
+    private JScrollPane getScrollHeader() {
+        if (scrolHeader == null) {
+            scrolHeader = new JScrollPane();
+            scrolHeader.setBounds(10, 307, 931, 113);
+            scrolHeader.setViewportView(getTxtHeaders());
+            scrolHeader.setBorder(
                 new TitledBorder(null, "Headers", TitledBorder.LEADING, TitledBorder.TOP,
                     null, Color.BLUE));
         }
-        return lbHeaders;
+        return scrolHeader;
     }
 
-    private JLabel getLbMessage() {
-        if (lbMessage == null) {
-            lbMessage = new JLabel("New label");
-            lbMessage.setBounds(10, 365, 881, 86);
-            lbMessage.setBorder(
+    private JScrollPane getScrollMessage() {
+        if (scrolMessage == null) {
+            scrolMessage = new JScrollPane();
+            scrolMessage.setBounds(10, 432, 931, 158);
+            scrolMessage.setViewportView(getTxtMessage());
+            scrolMessage.setBorder(
                 new TitledBorder(null, "Message", TitledBorder.LEADING, TitledBorder.TOP,
                     null, Color.BLUE));
         }
-        return lbMessage;
+        return scrolMessage;
+    }
+
+    private JTextPane getTxtHeaders() {
+        if (txtHeaders == null) {
+            txtHeaders = new JTextPane();
+            txtHeaders.setBounds(10, 302, 881, 58);
+        }
+        return txtHeaders;
+    }
+
+    private JTextPane getTxtMessage() {
+        if (txtMessage == null) {
+            txtMessage = new JTextPane();
+            txtMessage.setBounds(10, 365, 881, 86);
+        }
+        return txtMessage;
     }
 }

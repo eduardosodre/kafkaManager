@@ -1,5 +1,7 @@
 package br.com.kafkamanager.infrastructure.swing;
 
+import static javax.swing.SwingConstants.TOP;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Window;
@@ -9,29 +11,32 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.border.TitledBorder;
+import javax.swing.JTextPane;
 
 public class ViewProducer extends JDialog {
 
     private static final long serialVersionUID = 1L;
     private JPanel jContentPane = null;
-    protected JScrollPane scrollPane;
+    protected JScrollPane scrollPaneHeaders;
     protected JTable table;
     protected JButton btnProduce;
     protected JButton btnClose;
     protected JLabel lbTopicShow;
     protected JComboBox<String> comboTopic;
     protected JLabel lbKey;
-    protected JLabel lbValue;
     protected JTextField txtKey;
-    protected JTextField txtValue;
+    protected JTextPane txtValue;
     protected JButton btnSave;
     protected JButton btnLoadProducer;
     protected JButton btnPlus;
     protected JButton btnSubtract;
     protected JButton btnImportHeaderKafdrop;
+    protected JPanel panel;
+    protected JTabbedPane tabbedPane;
+    protected JScrollPane scrollPaneValue;
 
 
     public ViewProducer(Window owner) {
@@ -40,7 +45,7 @@ public class ViewProducer extends JDialog {
     }
 
     private void initialize() {
-        this.setSize(664, 593);
+        this.setSize(664, 720);
         this.setTitle("Kafka Producer");
         this.setContentPane(getJContentPane());
         this.setModal(true);
@@ -53,35 +58,26 @@ public class ViewProducer extends JDialog {
         if (jContentPane == null) {
             jContentPane = new JPanel();
             jContentPane.setLayout(null);
-            jContentPane.add(getScrollPane());
-            jContentPane.add(getBtnProduce());
-            jContentPane.add(getBtnClose());
             jContentPane.add(getLbTopicShow());
             jContentPane.add(getComboTopic());
             jContentPane.add(getLbKey());
-            jContentPane.add(getLbValue());
             jContentPane.add(getTxtKey());
-            jContentPane.add(getTxtValue());
-            jContentPane.add(getBtnSave());
-            jContentPane.add(getBtnLoadProducer());
             jContentPane.add(getBtnPlus());
             jContentPane.add(getBtnSubtract());
             jContentPane.add(getBtnImportHeaderKafdrop());
+            jContentPane.add(getPanel());
+            jContentPane.add(getTabbedPane());
 
         }
         return jContentPane;
     }
 
-    private JScrollPane getScrollPane() {
-        if (scrollPane == null) {
-            scrollPane = new JScrollPane();
-            scrollPane.setBounds(10, 222, 630, 274);
-            scrollPane.setViewportView(getTable());
-            scrollPane.setBorder(
-                new TitledBorder(null, "Header(s)", TitledBorder.LEADING, TitledBorder.TOP,
-                    null, Color.BLUE));
+    private JScrollPane getScrollPaneHeaders() {
+        if (scrollPaneHeaders == null) {
+            scrollPaneHeaders = new JScrollPane();
+            scrollPaneHeaders.setViewportView(getTable());
         }
-        return scrollPane;
+        return scrollPaneHeaders;
     }
 
     private JTable getTable() {
@@ -94,7 +90,7 @@ public class ViewProducer extends JDialog {
     private JButton getBtnProduce() {
         if (btnProduce == null) {
             btnProduce = new JButton("Produce to Topic");
-            btnProduce.setBounds(10, 506, 139, 40);
+            btnProduce.setBounds(0, 0, 139, 40);
         }
         return btnProduce;
     }
@@ -102,7 +98,7 @@ public class ViewProducer extends JDialog {
     private JButton getBtnClose() {
         if (btnClose == null) {
             btnClose = new JButton("Close");
-            btnClose.setBounds(489, 506, 151, 40);
+            btnClose.setBounds(479, 0, 151, 40);
         }
         return btnClose;
     }
@@ -135,15 +131,6 @@ public class ViewProducer extends JDialog {
         return lbKey;
     }
 
-    private JLabel getLbValue() {
-        if (lbValue == null) {
-            lbValue = new JLabel("Value");
-            lbValue.setFont(new Font("Tahoma", Font.PLAIN, 14));
-            lbValue.setBounds(10, 147, 91, 25);
-        }
-        return lbValue;
-    }
-
     private JTextField getTxtKey() {
         if (txtKey == null) {
             txtKey = new JTextField();
@@ -153,11 +140,9 @@ public class ViewProducer extends JDialog {
         return txtKey;
     }
 
-    private JTextField getTxtValue() {
+    private JTextPane getTxtValue() {
         if (txtValue == null) {
-            txtValue = new JTextField();
-            txtValue.setBounds(77, 143, 505, 32);
-            txtValue.setColumns(10);
+            txtValue = new JTextPane();
         }
         return txtValue;
     }
@@ -165,7 +150,7 @@ public class ViewProducer extends JDialog {
     private JButton getBtnSave() {
         if (btnSave == null) {
             btnSave = new JButton("Save Producer");
-            btnSave.setBounds(159, 506, 139, 40);
+            btnSave.setBounds(149, 0, 139, 40);
         }
         return btnSave;
     }
@@ -173,7 +158,7 @@ public class ViewProducer extends JDialog {
     private JButton getBtnLoadProducer() {
         if (btnLoadProducer == null) {
             btnLoadProducer = new JButton("Load Producer");
-            btnLoadProducer.setBounds(308, 506, 139, 40);
+            btnLoadProducer.setBounds(298, 0, 139, 40);
         }
         return btnLoadProducer;
     }
@@ -181,7 +166,7 @@ public class ViewProducer extends JDialog {
     private JButton getBtnPlus() {
         if (btnPlus == null) {
             btnPlus = new JButton("+");
-            btnPlus.setBounds(10, 191, 52, 21);
+            btnPlus.setBounds(10, 157, 52, 21);
         }
         return btnPlus;
     }
@@ -189,7 +174,7 @@ public class ViewProducer extends JDialog {
     private JButton getBtnSubtract() {
         if (btnSubtract == null) {
             btnSubtract = new JButton("-");
-            btnSubtract.setBounds(62, 191, 52, 21);
+            btnSubtract.setBounds(62, 157, 52, 21);
         }
         return btnSubtract;
     }
@@ -197,8 +182,39 @@ public class ViewProducer extends JDialog {
     private JButton getBtnImportHeaderKafdrop() {
         if (btnImportHeaderKafdrop == null) {
             btnImportHeaderKafdrop = new JButton("Import Header from Kafdrop");
-            btnImportHeaderKafdrop.setBounds(119, 191, 240, 21);
+            btnImportHeaderKafdrop.setBounds(119, 157, 240, 21);
         }
         return btnImportHeaderKafdrop;
+    }
+
+    private JPanel getPanel() {
+        if (panel == null) {
+            panel = new JPanel();
+            panel.setBounds(10, 633, 630, 40);
+            panel.setLayout(null);
+            panel.add(getBtnProduce());
+            panel.add(getBtnSave());
+            panel.add(getBtnLoadProducer());
+            panel.add(getBtnClose());
+        }
+        return panel;
+    }
+
+    private JTabbedPane getTabbedPane() {
+        if (tabbedPane == null) {
+            tabbedPane = new JTabbedPane(TOP);
+            tabbedPane.setBounds(10, 188, 630, 435);
+            tabbedPane.addTab("Value", null, getScrollPaneValue(), null);
+            tabbedPane.addTab("Headers", null, getScrollPaneHeaders(), null);
+        }
+        return tabbedPane;
+    }
+
+    private JScrollPane getScrollPaneValue() {
+        if (scrollPaneValue == null) {
+            scrollPaneValue = new JScrollPane();
+            scrollPaneValue.setViewportView(getTxtValue());
+        }
+        return scrollPaneValue;
     }
 }

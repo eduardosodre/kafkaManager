@@ -18,4 +18,23 @@ public class HeaderParser {
         }
         return eventMap;
     }
+
+
+    public static String mapToString(Map<String, String> map) {
+        if (map == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("{\n");
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            sb.append("  \"");
+            sb.append(entry.getKey());
+            sb.append("\": \"");
+            sb.append(entry.getValue());
+            sb.append("\",\n");
+        }
+        sb.delete(sb.length() - 2, sb.length());
+        sb.append("\n}");
+        return sb.toString();
+    }
 }
