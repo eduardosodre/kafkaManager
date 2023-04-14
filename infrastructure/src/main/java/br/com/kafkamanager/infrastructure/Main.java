@@ -2,6 +2,7 @@ package br.com.kafkamanager.infrastructure;
 
 import br.com.kafkamanager.infrastructure.swing.ViewDashboardController;
 import br.com.kafkamanager.infrastructure.swing.ViewKafkaConfigController;
+import br.com.kafkamanager.infrastructure.swing.util.LookAndFeelUtil;
 import br.com.kafkamanager.infrastructure.util.ContextUtil;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +12,7 @@ import org.springframework.core.env.MapPropertySource;
 public class Main {
 
     public static void main(String[] args) {
+        LookAndFeelUtil.startLookAndFeel();
         final var server = new ViewKafkaConfigController().getServer();
 
         Map<String, Object> props = new HashMap<>();

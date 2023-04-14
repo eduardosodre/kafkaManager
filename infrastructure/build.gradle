@@ -21,6 +21,9 @@ dependencies {
     implementation 'org.apache.kafka:kafka-clients:3.0.0'
     implementation 'com.google.code.gson:gson:2.8.9'
 
+    implementation 'net.sf.json-lib:json-lib:2.4:jdk15'
+    implementation 'com.fifesoft:rsyntaxtextarea:3.3.1'
+
     implementation 'org.springframework:spring-context:5.3.13'
 
     testImplementation 'org.mockito:mockito-core:4.1.0'

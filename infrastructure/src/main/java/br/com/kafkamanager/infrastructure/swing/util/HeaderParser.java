@@ -21,20 +21,17 @@ public class HeaderParser {
 
 
     public static String mapToString(Map<String, String> map) {
-        if (map == null) {
+        if (map == null || map.isEmpty()) {
             return "";
         }
         StringBuilder sb = new StringBuilder();
-        sb.append("{\n");
         for (Map.Entry<String, String> entry : map.entrySet()) {
-            sb.append("  \"");
             sb.append(entry.getKey());
-            sb.append("\": \"");
+            sb.append(": ");
             sb.append(entry.getValue());
-            sb.append("\",\n");
+            sb.append(", ");
         }
         sb.delete(sb.length() - 2, sb.length());
-        sb.append("\n}");
         return sb.toString();
     }
 }

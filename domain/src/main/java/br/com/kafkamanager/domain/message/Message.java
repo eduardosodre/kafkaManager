@@ -17,25 +17,28 @@ public class Message extends Entity<MessageID> {
     private final String message;
     private final Map<String, String> headers;
     private final LocalDateTime timestamp;
+    private final Long offset;
 
     private Message(MessageID messageID, String topicName, String message,
-        Map<String, String> headers, LocalDateTime timestamp) {
+        Map<String, String> headers, LocalDateTime timestamp, Long offset) {
         super(messageID);
         this.topicName = topicName;
         this.message = message;
         this.headers = headers;
         this.timestamp = timestamp;
+        this.offset = offset;
         selfValidate();
     }
 
     public static Message with(String key, String topicName, String message,
         Map<String, String> headers) {
-        return new Message(MessageID.from(key), topicName, message, headers, LocalDateTime.now());
+        return new Message(MessageID.from(key), topicName, message, headers, LocalDateTime.now(),
+            0l);
     }
 
     public static Message with(String key, String topicName, String message,
-        Map<String, String> headers, LocalDateTime timestamp) {
-        return new Message(MessageID.from(key), topicName, message, headers, timestamp);
+        Map<String, String> headers, LocalDateTime timestamp, Long offset) {
+        return new Message(MessageID.from(key), topicName, message, headers, timestamp, offset);
     }
 
     private void selfValidate() {

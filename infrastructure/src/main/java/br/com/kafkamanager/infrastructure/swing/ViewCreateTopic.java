@@ -1,5 +1,6 @@
 package br.com.kafkamanager.infrastructure.swing;
 
+import br.com.kafkamanager.infrastructure.swing.util.BackgroundPanel;
 import java.awt.Window;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -36,7 +37,7 @@ public class ViewCreateTopic extends JDialog {
 
     private JPanel getJContentPane() {
         if (jContentPane == null) {
-            jContentPane = new JPanel();
+            jContentPane = new BackgroundPanel();
             jContentPane.setLayout(null);
             jContentPane.add(getLbTopicName());
             jContentPane.add(getTxtTopicName());

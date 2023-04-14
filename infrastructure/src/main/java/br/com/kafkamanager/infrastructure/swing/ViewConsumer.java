@@ -1,5 +1,9 @@
 package br.com.kafkamanager.infrastructure.swing;
 
+import static javax.swing.SwingConstants.TOP;
+
+import br.com.kafkamanager.infrastructure.swing.util.BackgroundPanel;
+import br.com.kafkamanager.infrastructure.swing.util.TransparentJPanel;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Window;
@@ -9,10 +13,13 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.border.TitledBorder;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
 public class ViewConsumer extends JDialog {
 
@@ -26,11 +33,12 @@ public class ViewConsumer extends JDialog {
     protected JComboBox<String> txtPartition;
     protected JLabel lblOffset;
     protected JTextField txtOffset;
-    protected JScrollPane scrolHeader;
-    protected JScrollPane scrolMessage;
+    protected JScrollPane scrollHeader;
+    protected JScrollPane scrollMessage;
     protected JTextPane txtHeaders;
-    protected JTextPane txtMessage;
+    protected RSyntaxTextArea txtMessage;
     protected JLabel lbOffset;
+    protected JTabbedPane tabbedPane;
 
     public ViewConsumer(Window window) {
         super(window);
@@ -48,7 +56,7 @@ public class ViewConsumer extends JDialog {
 
     private JPanel getJContentPane() {
         if (jContentPane == null) {
-            jContentPane = new JPanel();
+            jContentPane = new BackgroundPanel();
             jContentPane.setLayout(null);
             jContentPane.add(getScrollPane());
             jContentPane.add(getPanel());
@@ -56,11 +64,20 @@ public class ViewConsumer extends JDialog {
             jContentPane.add(getTxtPartition());
             jContentPane.add(getLblOffset());
             jContentPane.add(getTxtOffset());
-            jContentPane.add(getScrollHeader());
-            jContentPane.add(getScrollMessage());
             jContentPane.add(getLbOffset());
+            jContentPane.add(getTabbedPane());
         }
         return jContentPane;
+    }
+
+    private JTabbedPane getTabbedPane() {
+        if (tabbedPane == null) {
+            tabbedPane = new JTabbedPane(TOP);
+            tabbedPane.setBounds(10, 302, 931, 300);
+            tabbedPane.addTab("Message", null, getScrollMessage(), null);
+            tabbedPane.addTab("Headers", null, getScrollHeader(), null);
+        }
+        return tabbedPane;
     }
 
     private JScrollPane getScrollPane() {
@@ -92,8 +109,8 @@ public class ViewConsumer extends JDialog {
 
     private JPanel getPanel() {
         if (panel == null) {
-            panel = new JPanel();
-            panel.setBounds(10, 600, 931, 41);
+            panel = new TransparentJPanel();
+            panel.setBounds(10, 610, 931, 41);
             panel.setLayout(null);
             panel.add(getBtnClose());
         }
@@ -146,41 +163,39 @@ public class ViewConsumer extends JDialog {
     }
 
     private JScrollPane getScrollHeader() {
-        if (scrolHeader == null) {
-            scrolHeader = new JScrollPane();
-            scrolHeader.setBounds(10, 307, 931, 113);
-            scrolHeader.setViewportView(getTxtHeaders());
-            scrolHeader.setBorder(
+        if (scrollHeader == null) {
+            scrollHeader = new JScrollPane();
+            scrollHeader.setViewportView(getTxtHeaders());
+            scrollHeader.setBorder(
                 new TitledBorder(null, "Headers", TitledBorder.LEADING, TitledBorder.TOP,
                     null, Color.BLUE));
         }
-        return scrolHeader;
+        return scrollHeader;
     }
 
     private JScrollPane getScrollMessage() {
-        if (scrolMessage == null) {
-            scrolMessage = new JScrollPane();
-            scrolMessage.setBounds(10, 432, 931, 158);
-            scrolMessage.setViewportView(getTxtMessage());
-            scrolMessage.setBorder(
+        if (scrollMessage == null) {
+            scrollMessage = new JScrollPane();
+            scrollMessage.setViewportView(getTxtMessage());
+            scrollMessage.setBorder(
                 new TitledBorder(null, "Message", TitledBorder.LEADING, TitledBorder.TOP,
                     null, Color.BLUE));
         }
-        return scrolMessage;
+        return scrollMessage;
     }
 
     private JTextPane getTxtHeaders() {
         if (txtHeaders == null) {
             txtHeaders = new JTextPane();
-            txtHeaders.setBounds(10, 302, 881, 58);
         }
         return txtHeaders;
     }
 
-    private JTextPane getTxtMessage() {
+    private RSyntaxTextArea getTxtMessage() {
         if (txtMessage == null) {
-            txtMessage = new JTextPane();
-            txtMessage.setBounds(10, 365, 881, 86);
+            txtMessage = new RSyntaxTextArea();
+            txtMessage.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JSON_WITH_COMMENTS);
+            txtMessage.setCodeFoldingEnabled(true);
         }
         return txtMessage;
     }

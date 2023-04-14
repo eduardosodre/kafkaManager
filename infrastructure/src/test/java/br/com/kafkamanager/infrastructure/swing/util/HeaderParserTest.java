@@ -23,10 +23,7 @@ class HeaderParserTest {
         map.put("key1", "value1");
         map.put("key2", "value2");
 
-        String expected = "{\n" +
-            "  \"key1\": \"value1\",\n" +
-            "  \"key2\": \"value2\"\n" +
-            "}";
+        String expected = "key1: value1, key2: value2";
 
         String result = HeaderParser.mapToString(map);
         assertEquals(expected, result);

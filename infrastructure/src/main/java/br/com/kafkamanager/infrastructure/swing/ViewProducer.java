@@ -2,6 +2,8 @@ package br.com.kafkamanager.infrastructure.swing;
 
 import static javax.swing.SwingConstants.TOP;
 
+import br.com.kafkamanager.infrastructure.swing.util.BackgroundPanel;
+import br.com.kafkamanager.infrastructure.swing.util.TransparentJPanel;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Window;
@@ -14,7 +16,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
 public class ViewProducer extends JDialog {
 
@@ -28,7 +31,7 @@ public class ViewProducer extends JDialog {
     protected JComboBox<String> comboTopic;
     protected JLabel lbKey;
     protected JTextField txtKey;
-    protected JTextPane txtValue;
+    protected RSyntaxTextArea txtValue;
     protected JButton btnSave;
     protected JButton btnLoadProducer;
     protected JButton btnPlus;
@@ -57,7 +60,7 @@ public class ViewProducer extends JDialog {
 
     private JPanel getJContentPane() {
         if (jContentPane == null) {
-            jContentPane = new JPanel();
+            jContentPane = new BackgroundPanel();
             jContentPane.setLayout(null);
             jContentPane.add(getLbTopicShow());
             jContentPane.add(getComboTopic());
@@ -142,9 +145,11 @@ public class ViewProducer extends JDialog {
         return txtKey;
     }
 
-    private JTextPane getTxtValue() {
+    private RSyntaxTextArea getTxtValue() {
         if (txtValue == null) {
-            txtValue = new JTextPane();
+            txtValue = new RSyntaxTextArea();
+            txtValue.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JSON_WITH_COMMENTS);
+            txtValue.setCodeFoldingEnabled(true);
         }
         return txtValue;
     }
@@ -199,7 +204,7 @@ public class ViewProducer extends JDialog {
 
     private JPanel getPanel() {
         if (panel == null) {
-            panel = new JPanel();
+            panel = new TransparentJPanel();
             panel.setBounds(10, 633, 630, 40);
             panel.setLayout(null);
             panel.add(getBtnProduce());

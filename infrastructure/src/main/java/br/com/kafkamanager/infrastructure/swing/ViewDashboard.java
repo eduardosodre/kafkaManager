@@ -1,5 +1,7 @@
 package br.com.kafkamanager.infrastructure.swing;
 
+import br.com.kafkamanager.infrastructure.swing.util.BackgroundPanel;
+import br.com.kafkamanager.infrastructure.swing.util.TransparentJPanel;
 import java.awt.Color;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -39,7 +41,7 @@ public class ViewDashboard extends JFrame {
 
     private JPanel getJContentPane() {
         if (jContentPane == null) {
-            jContentPane = new JPanel();
+            jContentPane = new BackgroundPanel();
             jContentPane.setLayout(null);
             jContentPane.add(getScrollPane());
             jContentPane.add(getPanel());
@@ -102,7 +104,7 @@ public class ViewDashboard extends JFrame {
 
     private JPanel getPanel() {
         if (panel == null) {
-            panel = new JPanel();
+            panel = new TransparentJPanel();
             panel.setBounds(10, 307, 881, 41);
             panel.setLayout(null);
             panel.add(getBtnProducer());

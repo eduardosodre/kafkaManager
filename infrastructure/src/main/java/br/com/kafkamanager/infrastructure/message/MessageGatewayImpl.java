@@ -81,7 +81,8 @@ public class MessageGatewayImpl implements MessageGateway {
                     record.value(),
                     headersMap,
                     LocalDateTime.ofInstant(Instant.ofEpochMilli(record.timestamp()),
-                        ZoneId.systemDefault()));
+                        ZoneId.systemDefault()),
+                    record.offset());
                 list.add(message);
                 count++;
             }

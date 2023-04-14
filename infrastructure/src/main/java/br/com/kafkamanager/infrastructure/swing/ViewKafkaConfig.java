@@ -1,5 +1,6 @@
 package br.com.kafkamanager.infrastructure.swing;
 
+import br.com.kafkamanager.infrastructure.swing.util.BackgroundPanel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -31,7 +32,7 @@ public class ViewKafkaConfig extends JDialog {
 
     private JPanel getJContentPane() {
         if (jContentPane == null) {
-            jContentPane = new JPanel();
+            jContentPane = new BackgroundPanel();
             jContentPane.setLayout(null);
             jContentPane.add(getLblBootstrapServers());
             jContentPane.add(getTxtServer());
