@@ -11,9 +11,9 @@ import br.com.kafkamanager.domain.topic.Topic;
 import br.com.kafkamanager.domain.topic.TopicID;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.DeleteTopicsOptions;
 import org.apache.kafka.clients.admin.DeleteTopicsResult;
-import org.apache.kafka.clients.admin.KafkaAdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.internals.KafkaFutureImpl;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TopicGatewayImplTest {
 
     @Mock
-    private KafkaAdminClient kafkaAdminClient;
+    private AdminClient kafkaAdminClient;
 
     @InjectMocks
     private TopicGatewayImpl topicGateway;

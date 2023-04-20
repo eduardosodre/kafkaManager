@@ -5,7 +5,9 @@ import br.com.kafkamanager.domain.topic.Topic;
 import br.com.kafkamanager.domain.topic.TopicGateway;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
+@Component
 @RequiredArgsConstructor
 public class ListTopicUseCase extends NullaryUseCase<List<Topic>> {
 
