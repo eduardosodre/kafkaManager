@@ -20,11 +20,9 @@ public class Main {
 
         System.setProperty("KAFKA_SERVER", server);
 
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-        context.register(MyConfig.class);
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(MyConfig.class);
         context.getEnvironment().getPropertySources()
             .addFirst(new MapPropertySource("myProps", props));
-        context.refresh();
 
         ContextUtil.setContext(context);
 

@@ -6,7 +6,9 @@ import br.com.kafkamanager.domain.message.Message;
 import br.com.kafkamanager.domain.message.MessageGateway;
 import br.com.kafkamanager.domain.validation.handler.Notification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
+@Component
 @RequiredArgsConstructor
 public class CreateMessageUseCase extends UseCase<CreateMessageCommand, Message> {
 

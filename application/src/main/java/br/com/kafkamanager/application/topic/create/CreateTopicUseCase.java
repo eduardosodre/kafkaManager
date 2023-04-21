@@ -6,7 +6,9 @@ import br.com.kafkamanager.domain.topic.Topic;
 import br.com.kafkamanager.domain.topic.TopicGateway;
 import br.com.kafkamanager.domain.validation.handler.Notification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
+@Component
 @RequiredArgsConstructor
 public class CreateTopicUseCase extends UseCase<CreateTopicCommand, Topic> {
 

@@ -4,7 +4,9 @@ import br.com.kafkamanager.application.UnitUseCase;
 import br.com.kafkamanager.domain.topic.TopicGateway;
 import br.com.kafkamanager.domain.topic.TopicID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
+@Component
 @RequiredArgsConstructor
 public class DeleteTopicUseCase extends UnitUseCase<TopicID> {
 

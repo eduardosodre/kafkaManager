@@ -6,7 +6,9 @@ import br.com.kafkamanager.domain.message.MessageFilter;
 import br.com.kafkamanager.domain.message.MessageGateway;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
+@Component
 @RequiredArgsConstructor
 public class ListMessageUseCase extends UseCase<MessageFilter, List<Message>> {
 
