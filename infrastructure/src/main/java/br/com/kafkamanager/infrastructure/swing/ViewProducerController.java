@@ -9,7 +9,6 @@ import br.com.kafkamanager.infrastructure.swing.util.JFileChooserUtil;
 import br.com.kafkamanager.infrastructure.swing.util.JOptionUtil;
 import br.com.kafkamanager.infrastructure.util.ContextUtil;
 import br.com.kafkamanager.infrastructure.util.JsonUtil;
-import java.awt.Window;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
@@ -31,8 +30,8 @@ public class ViewProducerController extends ViewProducer {
     private final String topicName;
     private DefaultTableModel model;
 
-    public ViewProducerController(Window owner, String topicName) {
-        super(owner);
+    public ViewProducerController(String topicName) {
+        super();
         listTopicUseCase = ContextUtil.getBean(ListTopicUseCase.class);
         createMessageUseCase = ContextUtil.getBean(CreateMessageUseCase.class);
         this.topicName = topicName;
@@ -61,9 +60,7 @@ public class ViewProducerController extends ViewProducer {
         btnPlus.addActionListener(e -> plus());
         btnSubtract.addActionListener(e -> subtract());
         btnImportHeaderKafdrop.addActionListener(e -> importHeaderKafrop());
-        btnFormatter.addActionListener(e -> {
-            txtValue.setText(JsonUtil.format(txtValue.getText()));
-        });
+        btnFormatter.addActionListener(e -> txtValue.setText(JsonUtil.format(txtValue.getText())));
     }
 
 

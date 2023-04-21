@@ -8,6 +8,7 @@ import br.com.kafkamanager.infrastructure.swing.util.JOptionUtil;
 import br.com.kafkamanager.infrastructure.util.ContextUtil;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
@@ -41,21 +42,29 @@ public class ViewDashboardController extends ViewDashboard {
     }
 
     private void setupButtons() {
-        btnClose.addActionListener(e -> {
-            final var kafkaProducer = ContextUtil.getBean(KafkaProducer.class);
-            final var kafkaAdminClient = ContextUtil.getBean(AdminClient.class);
-            final var kafkaConsumer = ContextUtil.getBean(KafkaConsumer.class);
-
-            kafkaProducer.close();
-            kafkaAdminClient.close();
-            kafkaConsumer.close();
-
-            System.exit(0);
-        });
+        btnClose.addActionListener(e -> closingProgram());
         btnConsumer.addActionListener(e -> consumer());
         btnCreateTopic.addActionListener(e -> createTopic());
         btnProducer.addActionListener(e -> producer());
         btnDeleteTopic.addActionListener(e -> deleteTopic());
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                closingProgram();
+            }
+        });
+    }
+
+    private void closingProgram() {
+        final var kafkaProducer = ContextUtil.getBean(KafkaProducer.class);
+        final var kafkaAdminClient = ContextUtil.getBean(AdminClient.class);
+        final var kafkaConsumer = ContextUtil.getBean(KafkaConsumer.class);
+
+        kafkaProducer.close();
+        kafkaAdminClient.close();
+        kafkaConsumer.close();
+
+        System.exit(0);
     }
 
     private void setupSearch() {
@@ -106,7 +115,7 @@ public class ViewDashboardController extends ViewDashboard {
         final var topicName = table.getValueAt(selected, 0).toString();
         listTopics.stream()
             .filter(topic -> topic.getId().getValue().equalsIgnoreCase(topicName)).findFirst()
-            .ifPresent(topic -> new ViewConsumerController(this, topic));
+            .ifPresent(ViewConsumerController::new);
     }
 
     private void producer() {
@@ -115,7 +124,7 @@ public class ViewDashboardController extends ViewDashboard {
             return;
         }
         final var topicName = table.getValueAt(selected, 0).toString();
-        new ViewProducerController(this, topicName);
+        new ViewProducerController(topicName);
     }
 
     private Integer getSelectedRow() {

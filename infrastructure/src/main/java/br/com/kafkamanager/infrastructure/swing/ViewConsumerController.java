@@ -10,7 +10,6 @@ import br.com.kafkamanager.domain.topic.Topic;
 import br.com.kafkamanager.infrastructure.swing.util.HeaderParser;
 import br.com.kafkamanager.infrastructure.util.ContextUtil;
 import br.com.kafkamanager.infrastructure.util.JsonUtil;
-import java.awt.Window;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
@@ -27,12 +26,13 @@ public class ViewConsumerController extends ViewConsumer {
     private final GetFirstOffsetTopicUseCase getFirstOffsetTopicUseCase;
     private DefaultTableModel model;
 
-    public ViewConsumerController(Window owner, Topic topic) {
-        super(owner);
+    public ViewConsumerController(Topic topic) {
+        super();
         this.topic = topic;
         listMessageUseCase = ContextUtil.getBean(ListMessageUseCase.class);
         getLastOffsetTopicUseCase = ContextUtil.getBean(GetLastOffsetTopicUseCase.class);
         getFirstOffsetTopicUseCase = ContextUtil.getBean(GetFirstOffsetTopicUseCase.class);
+        setTitle("Consumer " + topic.getId().getValue());
         start();
         setVisible(true);
     }
@@ -77,6 +77,7 @@ public class ViewConsumerController extends ViewConsumer {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     listMessage();
+                    showOffset();
                 }
             }
         });

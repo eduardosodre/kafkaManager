@@ -6,10 +6,9 @@ import br.com.kafkamanager.infrastructure.swing.util.BackgroundPanel;
 import br.com.kafkamanager.infrastructure.swing.util.TransparentJPanel;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Window;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -19,7 +18,7 @@ import javax.swing.JTextField;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
-public class ViewProducer extends JDialog {
+public class ViewProducer extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private JPanel jContentPane = null;
@@ -43,8 +42,8 @@ public class ViewProducer extends JDialog {
     protected JScrollPane scrollPaneValue;
 
 
-    public ViewProducer(Window owner) {
-        super(owner);
+    public ViewProducer() {
+        super();
         initialize();
     }
 
@@ -52,7 +51,6 @@ public class ViewProducer extends JDialog {
         this.setSize(664, 720);
         this.setTitle("Kafka Producer");
         this.setContentPane(getJContentPane());
-        this.setModal(true);
         this.setResizable(false);
         this.setLocationRelativeTo(getOwner());
     }

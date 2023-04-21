@@ -6,10 +6,9 @@ import br.com.kafkamanager.infrastructure.swing.util.BackgroundPanel;
 import br.com.kafkamanager.infrastructure.swing.util.TransparentJPanel;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Window;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -21,7 +20,7 @@ import javax.swing.border.TitledBorder;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
-public class ViewConsumer extends JDialog {
+public class ViewConsumer extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private JPanel jContentPane = null;
@@ -40,8 +39,8 @@ public class ViewConsumer extends JDialog {
     protected JLabel lbOffset;
     protected JTabbedPane tabbedPane;
 
-    public ViewConsumer(Window window) {
-        super(window);
+    public ViewConsumer() {
+        super();
         initialize();
     }
 
@@ -51,7 +50,6 @@ public class ViewConsumer extends JDialog {
         this.setContentPane(getJContentPane());
         this.setResizable(false);
         this.setLocationRelativeTo(getOwner());
-        this.setModal(true);
     }
 
     private JPanel getJContentPane() {
