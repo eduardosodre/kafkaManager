@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeSet;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -47,8 +48,10 @@ public class ViewProducerController extends ViewProducer {
     }
 
     private void initializeTopics() {
-        final var topics = listTopicUseCase.execute();
-        topics.forEach(kafkaTopicDto -> comboTopic.addItem(kafkaTopicDto.getId().getValue()));
+        final var topics = new TreeSet<>(listTopicUseCase.execute());
+        for (final var kafkaTopicDto : topics) {
+            comboTopic.addItem(kafkaTopicDto.getId().getValue());
+        }
         comboTopic.setSelectedItem(topicName);
     }
 
@@ -59,7 +62,7 @@ public class ViewProducerController extends ViewProducer {
         btnSave.addActionListener(e -> save());
         btnPlus.addActionListener(e -> plus());
         btnSubtract.addActionListener(e -> subtract());
-        btnImportHeaderKafdrop.addActionListener(e -> importHeaderKafrop());
+        btnImportHeaderKafdrop.addActionListener(e -> importHeadersFromKafdrop());
         btnFormatter.addActionListener(e -> txtValue.setText(JsonUtil.format(txtValue.getText())));
     }
 
@@ -131,8 +134,8 @@ public class ViewProducerController extends ViewProducer {
             txtValue.getText().strip(), map);
     }
 
-    private void importHeaderKafrop() {
-        final var header = JOptionUtil.showCustomInputDialog("Copy the header from Kafdrop:",
+    private void importHeadersFromKafdrop() {
+        final var header = JOptionUtil.showCustomInputDialog("Copy headers from Kafdrop:",
             "Complete");
         if (header == null || header.isBlank()) {
             return;
@@ -142,7 +145,9 @@ public class ViewProducerController extends ViewProducer {
 
     private void populateTableWithHeaders(Map<String, String> headerMap) {
         createTable();
-        headerMap.forEach((key, value) -> model.addRow(new Object[]{key, value}));
+        for (final var entry : headerMap.entrySet()) {
+            model.addRow(new Object[]{entry.getKey(), entry.getValue()});
+        }
     }
 
     private void showMessageDialog(String message) {

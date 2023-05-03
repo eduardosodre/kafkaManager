@@ -1,14 +1,14 @@
 package br.com.kafkamanager.infrastructure.swing.util;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class HeaderParser {
 
     public static Map<String, String> parseEventString(String eventString) {
-        final var eventMap = new HashMap<String, String>();
+        final var eventMap = new TreeMap<String, String>();
         final var keyValuePairs = eventString.split(", ");
         for (String pair : keyValuePairs) {
             final var entry = pair.split(": ");
