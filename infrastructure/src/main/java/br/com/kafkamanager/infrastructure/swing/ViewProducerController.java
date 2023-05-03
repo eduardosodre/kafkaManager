@@ -49,7 +49,9 @@ public class ViewProducerController extends ViewProducer {
 
     private void initializeTopics() {
         final var topics = new TreeSet<>(listTopicUseCase.execute());
-        topics.forEach(kafkaTopicDto -> comboTopic.addItem(kafkaTopicDto.getId().getValue()));
+        for (final var kafkaTopicDto : topics) {
+            comboTopic.addItem(kafkaTopicDto.getId().getValue());
+        }
         comboTopic.setSelectedItem(topicName);
     }
 
@@ -143,7 +145,9 @@ public class ViewProducerController extends ViewProducer {
 
     private void populateTableWithHeaders(Map<String, String> headerMap) {
         createTable();
-        headerMap.forEach((key, value) -> model.addRow(new Object[]{key, value}));
+        for (final var entry : headerMap.entrySet()) {
+            model.addRow(new Object[]{entry.getKey(), entry.getValue()});
+        }
     }
 
     private void showMessageDialog(String message) {
