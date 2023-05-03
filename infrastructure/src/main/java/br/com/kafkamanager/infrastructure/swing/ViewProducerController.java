@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeSet;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -47,7 +48,7 @@ public class ViewProducerController extends ViewProducer {
     }
 
     private void initializeTopics() {
-        final var topics = listTopicUseCase.execute();
+        final var topics = new TreeSet<>(listTopicUseCase.execute());
         topics.forEach(kafkaTopicDto -> comboTopic.addItem(kafkaTopicDto.getId().getValue()));
         comboTopic.setSelectedItem(topicName);
     }
