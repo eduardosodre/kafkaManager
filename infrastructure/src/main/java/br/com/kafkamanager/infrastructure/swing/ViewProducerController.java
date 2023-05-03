@@ -62,7 +62,7 @@ public class ViewProducerController extends ViewProducer {
         btnSave.addActionListener(e -> save());
         btnPlus.addActionListener(e -> plus());
         btnSubtract.addActionListener(e -> subtract());
-        btnImportHeaderKafdrop.addActionListener(e -> importHeaderKafrop());
+        btnImportHeaderKafdrop.addActionListener(e -> importHeadersFromKafdrop());
         btnFormatter.addActionListener(e -> txtValue.setText(JsonUtil.format(txtValue.getText())));
     }
 
@@ -134,8 +134,8 @@ public class ViewProducerController extends ViewProducer {
             txtValue.getText().strip(), map);
     }
 
-    private void importHeaderKafrop() {
-        final var header = JOptionUtil.showCustomInputDialog("Copy the header from Kafdrop:",
+    private void importHeadersFromKafdrop() {
+        final var header = JOptionUtil.showCustomInputDialog("Copy headers from Kafdrop:",
             "Complete");
         if (header == null || header.isBlank()) {
             return;
