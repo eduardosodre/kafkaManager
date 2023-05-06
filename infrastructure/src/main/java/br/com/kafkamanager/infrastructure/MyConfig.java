@@ -1,6 +1,7 @@
 package br.com.kafkamanager.infrastructure;
 
 import java.util.Properties;
+import lombok.Getter;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan(basePackages = {"br.com.kafkamanager.application", "br.com.kafkamanager.infrastructure"})
+@Getter
 public class MyConfig {
 
     @Value("${KAFKA_SERVER}")

@@ -1,5 +1,6 @@
 package br.com.kafkamanager.infrastructure.util;
 
+import com.google.gson.annotations.Expose;
 import java.io.IOException;
 import java.util.Objects;
 import org.junit.jupiter.api.Assertions;
@@ -24,8 +25,11 @@ class JsonUtilTest {
 
     private static class TestObject {
 
+        @Expose
         private final String firstName;
+        @Expose
         private final String lastName;
+        @Expose
         private final int age;
 
         public TestObject(String firstName, String lastName, int age) {
