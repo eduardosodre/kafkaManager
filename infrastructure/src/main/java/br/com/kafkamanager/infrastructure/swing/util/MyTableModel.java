@@ -61,7 +61,6 @@ public class MyTableModel<E> extends DefaultTableModel {
 
     public void setData(List<E> data) {
     	this.data = new ArrayList<>();
-    	this.data.addAll(data);
         setRowCount(0);
         for (E obj : data) {
             add(obj);
