@@ -12,10 +12,12 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +48,11 @@ class MessageGatewayImplTest {
         headers.put("header2", "value2");
         final var message = Message.with("test-key", "test-topic", "test-message", headers);
 
-        when(kafkaProducer.send(any())).thenReturn(null);
+        final var recordMetadata = new RecordMetadata(new TopicPartition("test-topic", 0), 0L, 0,
+            0L, 0, 0);
+
+        when(kafkaProducer.send(any())).thenReturn(
+            CompletableFuture.completedFuture(recordMetadata));
 
         gateway.create(message);
 
@@ -57,7 +63,11 @@ class MessageGatewayImplTest {
     @Test
     void shouldCreateMessageWithoutHeaders() {
         final var message = Message.with("test-key", "test-topic", "test-message", null);
-        when(kafkaProducer.send(any())).thenReturn(null);
+        final var recordMetadata = new RecordMetadata(new TopicPartition("test-topic", 0), 0L, 0,
+            0L, 0, 0);
+
+        when(kafkaProducer.send(any())).thenReturn(
+            CompletableFuture.completedFuture(recordMetadata));
 
         gateway.create(message);
 
