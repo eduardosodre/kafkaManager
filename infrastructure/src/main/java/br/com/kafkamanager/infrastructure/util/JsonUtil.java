@@ -14,7 +14,10 @@ import lombok.experimental.UtilityClass;
 public class JsonUtil {
 
     public static void writeJsonFile(Object object, String filename) throws IOException {
-        final var gson = new GsonBuilder().setPrettyPrinting().create();
+        final var gson = new GsonBuilder()
+        		.excludeFieldsWithoutExposeAnnotation()
+        		.setPrettyPrinting()
+        		.create();
         final var writer = new FileWriter(filename);
         gson.toJson(object, writer);
         writer.flush();
