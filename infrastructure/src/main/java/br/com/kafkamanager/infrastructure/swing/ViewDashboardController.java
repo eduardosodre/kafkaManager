@@ -58,6 +58,7 @@ public class ViewDashboardController extends ViewDashboard {
         setupSearch();
         showTopics();
         showInfoConnection();
+        showPreferenceTheme();
     }
 
     private Color setupColorJContentPane() {
@@ -245,5 +246,10 @@ public class ViewDashboardController extends ViewDashboard {
     private void showInfoConnection( ) {
     	String server = Optional.ofNullable(myConfig).map(MyConfig::getServer).orElse("");
     	lbInfoConnection.setText(server);
+    }
+
+    private void showPreferenceTheme(){
+        final var preferenceDto = UserPreferenceService.getPreferences();
+        comboTheme.setSelectedItem(preferenceDto.getThemeName());
     }
 }
