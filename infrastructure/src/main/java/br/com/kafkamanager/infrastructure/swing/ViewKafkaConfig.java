@@ -1,11 +1,13 @@
 package br.com.kafkamanager.infrastructure.swing;
 
-import br.com.kafkamanager.infrastructure.swing.util.BackgroundPanel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
 public class ViewKafkaConfig extends JDialog {
 
@@ -15,6 +17,10 @@ public class ViewKafkaConfig extends JDialog {
     protected JTextField txtServer;
     protected JButton btnSave;
     protected JButton btnCancel;
+    private JPanel panelLogo;
+    protected JLabel lbLogo;
+    protected JLabel lbLogoIcon;
+    private JSeparator separator;
 
     public ViewKafkaConfig() {
         super();
@@ -22,17 +28,19 @@ public class ViewKafkaConfig extends JDialog {
     }
 
     private void initialize() {
-        this.setSize(460, 152);
+        this.setSize(430, 193);
         this.setTitle("Kafka Config");
         this.setContentPane(getJContentPane());
         this.setModal(true);
         this.setResizable(false);
         this.setLocationRelativeTo(getOwner());
+    	getJContentPane().add(getPanelLogo());
+    	getJContentPane().add(getSeparator());
     }
 
     private JPanel getJContentPane() {
         if (jContentPane == null) {
-            jContentPane = new BackgroundPanel();
+            jContentPane = new JPanel();
             jContentPane.setLayout(null);
             jContentPane.add(getLblBootstrapServers());
             jContentPane.add(getTxtServer());
@@ -46,7 +54,7 @@ public class ViewKafkaConfig extends JDialog {
     private JLabel getLblBootstrapServers() {
         if (lblBootstrapServers == null) {
             lblBootstrapServers = new JLabel("Bootstrap Servers:");
-            lblBootstrapServers.setBounds(10, 21, 113, 25);
+            lblBootstrapServers.setBounds(10, 78, 113, 25);
         }
         return lblBootstrapServers;
     }
@@ -55,7 +63,7 @@ public class ViewKafkaConfig extends JDialog {
         if (txtServer == null) {
             txtServer = new JTextField();
             txtServer.setColumns(10);
-            txtServer.setBounds(127, 21, 277, 25);
+            txtServer.setBounds(127, 78, 277, 25);
             txtServer.setText("localhost:9092");
         }
         return txtServer;
@@ -64,7 +72,7 @@ public class ViewKafkaConfig extends JDialog {
     private JButton getBtnSave() {
         if (btnSave == null) {
             btnSave = new JButton("Save");
-            btnSave.setBounds(79, 56, 131, 36);
+            btnSave.setBounds(65, 120, 131, 25);
         }
         return btnSave;
     }
@@ -72,8 +80,42 @@ public class ViewKafkaConfig extends JDialog {
     private JButton getBtnCancel() {
         if (btnCancel == null) {
             btnCancel = new JButton("Cancel");
-            btnCancel.setBounds(233, 56, 131, 36);
+            btnCancel.setBounds(219, 120, 131, 25);
         }
         return btnCancel;
     }
+	private JPanel getPanelLogo() {
+		if (panelLogo == null) {
+			panelLogo = new JPanel();
+			panelLogo.setLayout(null);
+			panelLogo.setBounds(127, 11, 223, 35);
+			panelLogo.add(getLbLogo());
+			panelLogo.add(getLbLogoIcon());
+		}
+		return panelLogo;
+	}
+	private JLabel getLbLogo() {
+		if (lbLogo == null) {
+			lbLogo = new JLabel("KAFKA MANAGER");
+			lbLogo.setHorizontalAlignment(SwingConstants.CENTER);
+			lbLogo.setFont(UIManager.getFont("h3.font"));
+			lbLogo.setBounds(48, 0, 123, 35);
+		}
+		return lbLogo;
+	}
+	private JLabel getLbLogoIcon() {
+		if (lbLogoIcon == null) {
+			lbLogoIcon = new JLabel();
+			lbLogoIcon.setHorizontalAlignment(SwingConstants.LEFT);
+			lbLogoIcon.setBounds(0, 0, 46, 35);
+		}
+		return lbLogoIcon;
+	}
+	private JSeparator getSeparator() {
+		if (separator == null) {
+			separator = new JSeparator();
+			separator.setBounds(10, 59, 395, 2);
+		}
+		return separator;
+	}
 }
