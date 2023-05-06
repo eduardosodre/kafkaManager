@@ -1,6 +1,5 @@
 package br.com.kafkamanager.infrastructure.swing;
 
-import br.com.kafkamanager.infrastructure.swing.util.BackgroundPanel;
 import java.awt.Window;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -27,7 +26,7 @@ public class ViewCreateTopic extends JDialog {
     }
 
     private void initialize() {
-        this.setSize(460, 318);
+        this.setSize(432, 256);
         this.setTitle("Kafka Create Topic");
         this.setContentPane(getJContentPane());
         this.setModal(true);
@@ -37,7 +36,7 @@ public class ViewCreateTopic extends JDialog {
 
     private JPanel getJContentPane() {
         if (jContentPane == null) {
-            jContentPane = new BackgroundPanel();
+            jContentPane = new JPanel();
             jContentPane.setLayout(null);
             jContentPane.add(getLbTopicName());
             jContentPane.add(getTxtTopicName());
@@ -72,7 +71,7 @@ public class ViewCreateTopic extends JDialog {
     private JButton getBtnSave() {
         if (btnSave == null) {
             btnSave = new JButton("Save");
-            btnSave.setBounds(84, 219, 131, 36);
+            btnSave.setBounds(66, 181, 131, 25);
         }
         return btnSave;
     }
@@ -80,7 +79,7 @@ public class ViewCreateTopic extends JDialog {
     private JButton getBtnCancel() {
         if (btnCancel == null) {
             btnCancel = new JButton("Cancel");
-            btnCancel.setBounds(238, 219, 131, 36);
+            btnCancel.setBounds(220, 181, 131, 25);
         }
         return btnCancel;
     }

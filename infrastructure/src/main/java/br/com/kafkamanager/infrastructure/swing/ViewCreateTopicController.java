@@ -5,7 +5,9 @@ import br.com.kafkamanager.application.topic.create.CreateTopicUseCase;
 import br.com.kafkamanager.domain.exceptions.NotificationException;
 import br.com.kafkamanager.infrastructure.swing.util.ComponentValidator;
 import br.com.kafkamanager.infrastructure.swing.util.ComponentValidator.FieldType;
+import br.com.kafkamanager.infrastructure.swing.util.SetupColor;
 import br.com.kafkamanager.infrastructure.util.ContextUtil;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import java.awt.Window;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -26,6 +28,7 @@ public class ViewCreateTopicController extends ViewCreateTopic {
     }
 
     private void start() {
+        setupIcons();
         initializeListeners();
     }
 
@@ -60,4 +63,13 @@ public class ViewCreateTopicController extends ViewCreateTopic {
         }
     }
 
+    private void setupIcons() {
+        var iconBtnSave = new FlatSVGIcon("icons/checkmark_outline_icon.svg", 18, 18, getClass().getClassLoader());
+        iconBtnSave.setColorFilter(SetupColor.getIconColor());
+        btnSave.setIcon(iconBtnSave);
+
+        var iconBtnCancel = new FlatSVGIcon("icons/close_outline_icon.svg", 18, 18, getClass().getClassLoader());
+        iconBtnCancel.setColorFilter(SetupColor.getIconColor());
+        btnCancel.setIcon(iconBtnCancel);
+    }
 }
