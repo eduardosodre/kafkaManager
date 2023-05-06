@@ -8,6 +8,7 @@ import br.com.kafkamanager.domain.message.Message;
 import br.com.kafkamanager.domain.message.MessageFilter;
 import br.com.kafkamanager.domain.topic.Topic;
 import br.com.kafkamanager.infrastructure.swing.util.HeaderParser;
+import br.com.kafkamanager.infrastructure.swing.util.MonochromeTableCellRenderer;
 import br.com.kafkamanager.infrastructure.util.ContextUtil;
 import br.com.kafkamanager.infrastructure.util.JsonUtil;
 import java.awt.event.KeyAdapter;
@@ -82,6 +83,7 @@ public class ViewConsumerController extends ViewConsumer {
             }
         });
 
+        table.setDefaultRenderer(Object.class, new MonochromeTableCellRenderer());
         table.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 int selectedRow = table.getSelectedRow();
