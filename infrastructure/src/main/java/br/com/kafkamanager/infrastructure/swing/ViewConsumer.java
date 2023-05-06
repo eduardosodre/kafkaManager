@@ -2,9 +2,7 @@ package br.com.kafkamanager.infrastructure.swing;
 
 import static javax.swing.SwingConstants.TOP;
 
-import br.com.kafkamanager.infrastructure.swing.util.BackgroundPanel;
 import br.com.kafkamanager.infrastructure.swing.util.TransparentJPanel;
-import java.awt.Color;
 import java.awt.Font;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -16,7 +14,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
-import javax.swing.border.TitledBorder;
+import javax.swing.UIManager;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
@@ -45,7 +43,7 @@ public class ViewConsumer extends JFrame {
     }
 
     private void initialize() {
-        this.setSize(965, 699);
+        this.setSize(965, 685);
         this.setTitle("Kafka Consumer");
         this.setContentPane(getJContentPane());
         this.setResizable(false);
@@ -54,7 +52,7 @@ public class ViewConsumer extends JFrame {
 
     private JPanel getJContentPane() {
         if (jContentPane == null) {
-            jContentPane = new BackgroundPanel();
+            jContentPane = new JPanel();
             jContentPane.setLayout(null);
             jContentPane.add(getScrollPane());
             jContentPane.add(getPanel());
@@ -72,6 +70,7 @@ public class ViewConsumer extends JFrame {
         if (tabbedPane == null) {
             tabbedPane = new JTabbedPane(TOP);
             tabbedPane.setBounds(10, 302, 931, 300);
+            tabbedPane.setFont(UIManager.getFont( "h4.font" ));
             tabbedPane.addTab("Message", null, getScrollMessage(), null);
             tabbedPane.addTab("Headers", null, getScrollHeader(), null);
         }
@@ -83,9 +82,6 @@ public class ViewConsumer extends JFrame {
             scrollPane = new JScrollPane();
             scrollPane.setBounds(10, 55, 931, 242);
             scrollPane.setViewportView(getTable());
-            scrollPane.setBorder(
-                new TitledBorder(null, "Topics", TitledBorder.LEADING, TitledBorder.TOP,
-                    null, Color.BLUE));
         }
         return scrollPane;
     }
@@ -100,7 +96,7 @@ public class ViewConsumer extends JFrame {
     private JButton getBtnClose() {
         if (btnClose == null) {
             btnClose = new JButton("Close");
-            btnClose.setBounds(780, 0, 151, 40);
+            btnClose.setBounds(780, 0, 151, 25);
         }
         return btnClose;
     }
@@ -108,7 +104,7 @@ public class ViewConsumer extends JFrame {
     private JPanel getPanel() {
         if (panel == null) {
             panel = new TransparentJPanel();
-            panel.setBounds(10, 610, 931, 41);
+            panel.setBounds(10, 610, 931, 25);
             panel.setLayout(null);
             panel.add(getBtnClose());
         }
@@ -135,7 +131,6 @@ public class ViewConsumer extends JFrame {
     private JLabel getLblOffset() {
         if (lblOffset == null) {
             lblOffset = new JLabel("Offset:");
-            lblOffset.setFont(new Font("Tahoma", Font.PLAIN, 14));
             lblOffset.setBounds(209, 15, 86, 30);
         }
         return lblOffset;
@@ -164,9 +159,6 @@ public class ViewConsumer extends JFrame {
         if (scrollHeader == null) {
             scrollHeader = new JScrollPane();
             scrollHeader.setViewportView(getTxtHeaders());
-            scrollHeader.setBorder(
-                new TitledBorder(null, "Headers", TitledBorder.LEADING, TitledBorder.TOP,
-                    null, Color.BLUE));
         }
         return scrollHeader;
     }
@@ -175,9 +167,6 @@ public class ViewConsumer extends JFrame {
         if (scrollMessage == null) {
             scrollMessage = new JScrollPane();
             scrollMessage.setViewportView(getTxtMessage());
-            scrollMessage.setBorder(
-                new TitledBorder(null, "Message", TitledBorder.LEADING, TitledBorder.TOP,
-                    null, Color.BLUE));
         }
         return scrollMessage;
     }
@@ -192,6 +181,8 @@ public class ViewConsumer extends JFrame {
     private RSyntaxTextArea getTxtMessage() {
         if (txtMessage == null) {
             txtMessage = new RSyntaxTextArea();
+            txtMessage.setBackground(UIManager.getColor( "TextArea.background" ));
+            txtMessage.setFont(UIManager.getFont("TextArea.font"));
             txtMessage.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JSON_WITH_COMMENTS);
             txtMessage.setCodeFoldingEnabled(true);
         }
