@@ -9,7 +9,7 @@ import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode(callSuper = false)
-public class Topic extends Entity<TopicID> {
+public class Topic extends Entity<TopicID> implements Comparable<Topic> {
 
     private final Integer partitions;
     private final Integer replications;
@@ -37,5 +37,10 @@ public class Topic extends Entity<TopicID> {
     @Override
     public void validate(final ValidationHandler handler) {
         new TopicValidator(this, handler).validate();
+    }
+
+    @Override
+    public int compareTo(Topic topic) {
+        return this.id.getValue().compareTo(topic.getId().getValue());
     }
 }
