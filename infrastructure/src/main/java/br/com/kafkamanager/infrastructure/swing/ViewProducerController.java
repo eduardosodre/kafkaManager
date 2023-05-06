@@ -311,7 +311,10 @@ public class ViewProducerController extends ViewProducer {
         }
 
         try {
+            modelListProducer.setValueAt(kafkaProducerDto.getDescription().replace("*", ""),
+                    tableListProducer.getSelectedRow(), 0);
             JsonUtil.writeJsonFile(kafkaProducerDto, file);
+            kafkaProducerDto.setFile(file);
             showMessageDialog(FILE_SAVED_SUCCESSFULLY_MESSAGE);
         } catch (IOException e) {
             showMessageDialog(COULD_NOT_SAVE_FILE_MESSAGE);
@@ -355,6 +358,8 @@ public class ViewProducerController extends ViewProducer {
                             txtValue.getText().strip(), map, listSent);
 
                     if (Boolean.FALSE.equals(toString.isEmpty()) && !toString.equals(p.toString())) {
+                        modelListProducer.setValueAt("*" + p.getDescription().replace("*", ""),
+                                tableListProducer.getSelectedRow(), 0);
                         p.setDescription("*" + p.getDescription().replace("*", ""));
                     }
                     return p;
