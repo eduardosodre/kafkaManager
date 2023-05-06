@@ -38,12 +38,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
@@ -108,7 +109,7 @@ public class ViewProducerController extends ViewProducer {
         txtSearch.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
-            	filterTableListProduces();
+                filterTableListProduces();
             }
         });
 
@@ -121,61 +122,13 @@ public class ViewProducerController extends ViewProducer {
             }
         });
 
-        txtComboTopic.addFocusListener(new FocusAdapter() {
-        	@Override
-        	public void focusGained(FocusEvent e) {
-        		produtcerDataShowedUpdated = false;
-        	}
-        	@Override
-        	public void focusLost(FocusEvent e) {
-        		updateProducer();
-        	}
-        });
-
-        comboTopic.addFocusListener(new FocusAdapter() {
-        	@Override
-        	public void focusGained(FocusEvent e) {
-        		produtcerDataShowedUpdated = false;
-        	}
-        	@Override
-        	public void focusLost(FocusEvent e) {
-        		updateProducer();
-        	}
-        });
-
-        txtKey.addFocusListener(new FocusAdapter() {
-        	@Override
-        	public void focusGained(FocusEvent e) {
-        		produtcerDataShowedUpdated = false;
-        	}
-        	@Override
-        	public void focusLost(FocusEvent e) {
-        		updateProducer();
-        	}
-        });
-
-        txtValue.addFocusListener(new FocusAdapter() {
-        	@Override
-        	public void focusGained(FocusEvent e) {
-        		produtcerDataShowedUpdated = false;
-        	}
-        	@Override
-        	public void focusLost(FocusEvent e) {
-        		updateProducer();
-        	}
-        });
+        updateFromComponent(txtComboTopic);
+        updateFromComponent(comboTopic);
+        updateFromComponent(txtKey);
+        updateFromComponent(txtValue);
+        updateFromComponent(tableHeader);
 
         tableHeader.setDefaultRenderer(Object.class, new MonochromeTableCellRenderer());
-        tableHeader.addFocusListener(new FocusAdapter() {
-        	@Override
-        	public void focusGained(FocusEvent e) {
-        		produtcerDataShowedUpdated = false;
-        	}
-        	@Override
-        	public void focusLost(FocusEvent e) {
-        		updateProducer();
-        	}
-        });
 
         tableListProducer.setDefaultRenderer(Object.class, new MonochromeTableCellRenderer());
         tableListProducer.setTableHeader(null);
@@ -188,7 +141,7 @@ public class ViewProducerController extends ViewProducer {
         tableListProducer.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
-            	showProducer();
+                showProducer();
             }
         });
 
@@ -198,13 +151,28 @@ public class ViewProducerController extends ViewProducer {
         tableSentProducers.setDefaultEditor(Object.class, null);
     }
 
+    private void updateFromComponent(JComponent txtKey) {
+        txtKey.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                produtcerDataShowedUpdated = false;
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                updateProducer();
+            }
+        });
+    }
+
     private void createTableHeader() {
         modelHeader = new DefaultTableModel(COLUMN_NAMES, 0);
         tableHeader.setModel(modelHeader);
     }
 
     private void createTableListProducer() {
-        modelListProducer = new MyTableModel<>(List.of("description"), CreateMessageCommandDto.class);
+        modelListProducer = new MyTableModel<>(List.of("description"),
+                CreateMessageCommandDto.class);
         tableListProducer.setModel(modelListProducer);
     }
 
@@ -215,24 +183,28 @@ public class ViewProducerController extends ViewProducer {
 
     private void producer() {
         try {
-        	if (TRUE.equals(isProducerDataUpdated())) {
-        		final var commandDto = modelListProducer.get(tableListProducer.getSelectedRow());
-	            final var message = createMessageUseCase.execute(commandDto.buildCreateMessageCommand());
+            if (TRUE.equals(isProducerDataUpdated())) {
+                final var commandDto = modelListProducer.get(tableListProducer.getSelectedRow());
+                final var message = createMessageUseCase.execute(
+                        commandDto.buildCreateMessageCommand());
 
-	            final var stringBuilder = new StringBuilder("<html>");
-	        	stringBuilder.append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-	        	stringBuilder.append("<br>");
-	        	stringBuilder.append("> " + message.getTopicName());
-	        	stringBuilder.append("<br>");
-	        	stringBuilder.append("Offset: " + message.getOffset());
-	        	stringBuilder.append("</html>");
+                final var stringBuilder = new StringBuilder("<html>");
+                stringBuilder.append(
+                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                stringBuilder.append("<br>");
+                stringBuilder.append(">" + message.getTopicName());
+                stringBuilder.append("<br>");
+                stringBuilder.append("Offset: " + message.getOffset());
+                stringBuilder.append("</html>");
 
-	        	commandDto.getSentProducers().add(stringBuilder.toString());
-	        	modelSentProducers.addRow(new Object[]{stringBuilder.toString()});
-        	}
+                commandDto.getSentProducers().add(stringBuilder.toString());
+                modelSentProducers.addRow(new Object[]{stringBuilder.toString()});
+                var verticalScrollBar = scrollPaneListProduced.getVerticalScrollBar();
+                verticalScrollBar.setValue(verticalScrollBar.getMaximum());
+            }
         } catch (NotificationException e) {
             JOptionPane.showMessageDialog(null,
-                MESSAGE_CREATED_ERROR + ": " + e.getFormattedErrors());
+                    MESSAGE_CREATED_ERROR + ": " + e.getFormattedErrors());
         }
     }
 
@@ -249,35 +221,35 @@ public class ViewProducerController extends ViewProducer {
         }
     }
 
-	private Boolean isProducerDataUpdated() {
-		Instant startTime = Instant.now();
-		Instant endTime = startTime.plus(Duration.ofMillis(500));
+    private Boolean isProducerDataUpdated() {
+        Instant startTime = Instant.now();
+        Instant endTime = startTime.plus(Duration.ofMillis(500));
 
-		while (Instant.now().isBefore(endTime)) {
-			if (TRUE.equals(produtcerDataShowedUpdated)) {
-				return true;
-			}
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-			}
-		}
-		return false;
-	}
+        while (Instant.now().isBefore(endTime)) {
+            if (TRUE.equals(produtcerDataShowedUpdated)) {
+                return true;
+            }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+            }
+        }
+        return false;
+    }
 
-	private void showProducer() {
-		if (TRUE.equals(isProducerDataUpdated())) {
-			rowTableListProducerShowed = tableListProducer.getSelectedRow();
-			final var kafkaProducerDto = modelListProducer.get(rowTableListProducerShowed);
-			tabbedPane.setVisible(true);
-			comboTopic.setSelectedItem(kafkaProducerDto.getTopicName());
-			txtKey.setText(kafkaProducerDto.getKey());
-			txtValue.setText(kafkaProducerDto.getMessage());
+    private void showProducer() {
+        if (TRUE.equals(isProducerDataUpdated())) {
+            rowTableListProducerShowed = tableListProducer.getSelectedRow();
+            final var kafkaProducerDto = modelListProducer.get(rowTableListProducerShowed);
+            tabbedPane.setVisible(true);
+            comboTopic.setSelectedItem(kafkaProducerDto.getTopicName());
+            txtKey.setText(kafkaProducerDto.getKey());
+            txtValue.setText(kafkaProducerDto.getMessage());
 
-			populateTableWithHeaders(kafkaProducerDto.getHeaders());
-			populateTableSentProducers(kafkaProducerDto.getSentProducers());
-		}
-	}
+            populateTableWithHeaders(kafkaProducerDto.getHeaders());
+            populateTableSentProducers(kafkaProducerDto.getSentProducers());
+        }
+    }
 
     private Set<String> listFiles() throws IOException {
         File directory = new File("models");
@@ -287,9 +259,9 @@ public class ViewProducerController extends ViewProducer {
 
         try (Stream<Path> stream = Files.list(Paths.get(directory.getPath()))) {
             return stream
-              .filter(file -> !Files.isDirectory(file))
-              .map(Path::toString)
-              .collect(Collectors.toSet());
+                    .filter(file -> !Files.isDirectory(file))
+                    .map(Path::toString)
+                    .collect(Collectors.toSet());
         }
     }
 
@@ -299,8 +271,9 @@ public class ViewProducerController extends ViewProducer {
             listCreateMessageCommands = listFiles().stream()
                     .map(file -> {
                         try {
-                        	final var kafkaProducerDto = JsonUtil.readJsonFile(file, CreateMessageCommandDto.class);
-                        	kafkaProducerDto.setFile(file);
+                            final var kafkaProducerDto = JsonUtil.readJsonFile(file,
+                                    CreateMessageCommandDto.class);
+                            kafkaProducerDto.setFile(file);
                             return kafkaProducerDto;
                         } catch (FileNotFoundException e) {
                             System.err.println("Cannot read file " + file);
@@ -310,7 +283,7 @@ public class ViewProducerController extends ViewProducer {
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
 
-            if(Boolean.FALSE.equals(listCreateMessageCommands.isEmpty())) {
+            if (Boolean.FALSE.equals(listCreateMessageCommands.isEmpty())) {
                 listCreateMessageCommands.sort((p1, p2) -> {
                     if (p1.getDescription().equals(p2.getDescription())) {
                         return p1.getTopicName().compareTo(p2.getTopicName());
@@ -318,7 +291,7 @@ public class ViewProducerController extends ViewProducer {
                         return p1.getDescription().compareTo(p2.getDescription());
                     }
                 });
-            	modelListProducer.setData(listCreateMessageCommands);
+                modelListProducer.setData(listCreateMessageCommands);
                 tableListProducer.changeSelection(0, 0, false, false);
                 showProducer();
             }
@@ -328,14 +301,14 @@ public class ViewProducerController extends ViewProducer {
     }
 
     private void save() {
-    	final var kafkaProducerDto = buildMessageCommandDto(modelListProducer.get(tableListProducer.getSelectedRow()));
-    	final String file;
-    	if (Objects.nonNull(kafkaProducerDto.getFile())) {
-    		file = kafkaProducerDto.getFile();
-
-    	} else {
-    		file = JFileChooserUtil.chooseFile();
-    	}
+        final var kafkaProducerDto = buildMessageCommandDto(
+                modelListProducer.get(tableListProducer.getSelectedRow()));
+        final String file;
+        if (Objects.nonNull(kafkaProducerDto.getFile())) {
+            file = kafkaProducerDto.getFile();
+        } else {
+            file = JFileChooserUtil.chooseFile();
+        }
 
         try {
             JsonUtil.writeJsonFile(kafkaProducerDto, file);
@@ -354,11 +327,11 @@ public class ViewProducerController extends ViewProducer {
     }
 
     private CreateMessageCommandDto buildMessageCommandDto() {
-    	return buildMessageCommandDto(null);
+        return buildMessageCommandDto(null);
     }
 
     private CreateMessageCommandDto buildMessageCommandDto(CreateMessageCommandDto producer) {
-    	final var toString = Optional.ofNullable(producer).map(Object::toString).orElse("");
+        final var toString = Optional.ofNullable(producer).map(Object::toString).orElse("");
         final var map = new HashMap<String, String>();
         final var totalRow = tableHeader.getRowCount();
         final var keyProducer = txtKey.getText().strip();
@@ -370,30 +343,30 @@ public class ViewProducerController extends ViewProducer {
             }
         }
         final var listSent = new ArrayList<String>();
-		for (int i = 0; i < tableSentProducers.getRowCount(); i++) {
+        for (int i = 0; i < tableSentProducers.getRowCount(); i++) {
             String value = tableSentProducers.getValueAt(i, 0).toString().strip();
             listSent.add(value);
         }
 
         return Optional.ofNullable(producer)
-        .map(p -> {
-        	p.update(p.getDescription(), keyProducer,
-                    String.valueOf(comboTopic.getSelectedItem()),
-                    txtValue.getText().strip(), map, listSent);
+                .map(p -> {
+                    p.update(p.getDescription(), keyProducer,
+                            String.valueOf(comboTopic.getSelectedItem()),
+                            txtValue.getText().strip(), map, listSent);
 
-        	if (Boolean.FALSE.equals(toString.isEmpty()) && !toString.equals(p.toString())) {
-        		p.setDescription("*" + p.getDescription().replace("*", ""));
-        	}
-        	return p;
-    	})
-        .orElse(CreateMessageCommandDto.of("Description", keyProducer,
-                String.valueOf(comboTopic.getSelectedItem()),
-                txtValue.getText().strip(), map, new ArrayList<>(), null));
+                    if (Boolean.FALSE.equals(toString.isEmpty()) && !toString.equals(p.toString())) {
+                        p.setDescription("*" + p.getDescription().replace("*", ""));
+                    }
+                    return p;
+                })
+                .orElse(CreateMessageCommandDto.of("Description", keyProducer,
+                        String.valueOf(comboTopic.getSelectedItem()),
+                        txtValue.getText().strip(), map, new ArrayList<>(), null));
     }
 
     private void importHeadersFromKafdrop() {
         final var header = JOptionUtil.showCustomInputDialog("Copy headers from Kafdrop:",
-            "Complete");
+                "Complete");
         if (header == null || header.isBlank()) {
             return;
         }
@@ -410,7 +383,7 @@ public class ViewProducerController extends ViewProducer {
     private void populateTableSentProducers(List<String> listSent) {
         createTableSentProducers();
         if (listSent != null) {
-        	listSent.forEach((value) -> modelSentProducers.addRow(new Object[]{value}));
+            listSent.forEach((value) -> modelSentProducers.addRow(new Object[]{value}));
         }
     }
 
@@ -419,43 +392,53 @@ public class ViewProducerController extends ViewProducer {
     }
 
     private void setupIcons() {
-    	var iconBtnLoadProducer = new FlatSVGIcon("icons/upload_icon.svg", 20, 20, getClass().getClassLoader());
-    	iconBtnLoadProducer.setColorFilter(SetupColor.getIconColor());
-		btnLoadProducer.setIcon(iconBtnLoadProducer);
+        var iconBtnLoadProducer = new FlatSVGIcon("icons/upload_icon.svg", 20, 20,
+                getClass().getClassLoader());
+        iconBtnLoadProducer.setColorFilter(SetupColor.getIconColor());
+        btnLoadProducer.setIcon(iconBtnLoadProducer);
 
-    	var iconBtnNewProducer = new FlatSVGIcon(getClass().getClassLoader().getResource("icons/add_outline_icon.svg"));
-    	iconBtnNewProducer.setColorFilter(SetupColor.getIconColor());
+        var iconBtnNewProducer = new FlatSVGIcon(
+                getClass().getClassLoader().getResource("icons/add_outline_icon.svg"));
+        iconBtnNewProducer.setColorFilter(SetupColor.getIconColor());
         btnNewProducer.setIcon(iconBtnNewProducer);
 
-        var iconBtnDeleteProducer = new FlatSVGIcon("icons/trash_icon.svg", 20, 20, getClass().getClassLoader());
+        var iconBtnDeleteProducer = new FlatSVGIcon("icons/trash_icon.svg", 20, 20,
+                getClass().getClassLoader());
         iconBtnDeleteProducer.setColorFilter(SetupColor.getIconColor());
         btnDeleteProducer.setIcon(iconBtnDeleteProducer);
 
-        var iconBtnSave = new FlatSVGIcon("icons/disk_save_floppy_icon.svg", 20, 20, getClass().getClassLoader());
+        var iconBtnSave = new FlatSVGIcon("icons/disk_save_floppy_icon.svg", 20, 20,
+                getClass().getClassLoader());
         iconBtnSave.setColorFilter(SetupColor.getIconColor());
         btnSave.setIcon(iconBtnSave);
 
-        var iconBtnProduce = new FlatSVGIcon("icons/mail_send_line_icon.svg", 20, 20, getClass().getClassLoader());
+        var iconBtnProduce = new FlatSVGIcon("icons/mail_send_line_icon.svg", 20, 20,
+                getClass().getClassLoader());
         iconBtnProduce.setColorFilter(SetupColor.getIconColor());
         btnProduce.setIcon(iconBtnProduce);
 
-        var iconBtnPlus = new FlatSVGIcon("icons/add_outline_icon.svg", 18, 18, getClass().getClassLoader());
+        var iconBtnPlus = new FlatSVGIcon("icons/add_outline_icon.svg", 18, 18,
+                getClass().getClassLoader());
         iconBtnPlus.setColorFilter(SetupColor.getIconColor());
         btnPlus.setIcon(iconBtnPlus);
 
-        var iconBtnSubtract = new FlatSVGIcon("icons/minus_outline_icon.svg", 18, 18, getClass().getClassLoader());
+        var iconBtnSubtract = new FlatSVGIcon("icons/minus_outline_icon.svg", 18, 18,
+                getClass().getClassLoader());
         iconBtnSubtract.setColorFilter(SetupColor.getIconColor());
         btnSubtract.setIcon(iconBtnSubtract);
 
-        var iconBtnImportHeaderKafdrop = new FlatSVGIcon("icons/upload_icon.svg", 18, 18, getClass().getClassLoader());
+        var iconBtnImportHeaderKafdrop = new FlatSVGIcon("icons/upload_icon.svg", 18, 18,
+                getClass().getClassLoader());
         iconBtnImportHeaderKafdrop.setColorFilter(SetupColor.getIconColor());
         btnImportHeaderKafdrop.setIcon(iconBtnImportHeaderKafdrop);
 
-        var iconBtnFormatter = new FlatSVGIcon("icons/code_brackets_icon.svg", 16, 16, getClass().getClassLoader());
+        var iconBtnFormatter = new FlatSVGIcon("icons/code_brackets_icon.svg", 16, 16,
+                getClass().getClassLoader());
         iconBtnFormatter.setColorFilter(SetupColor.getIconColor());
         btnFormatter.setIcon(iconBtnFormatter);
 
-        var iconTxtSearch = new FlatSVGIcon("icons/search_icon.svg", 16, 16, getClass().getClassLoader());
+        var iconTxtSearch = new FlatSVGIcon("icons/search_icon.svg", 16, 16,
+                getClass().getClassLoader());
         iconTxtSearch.setColorFilter(SetupColor.getIconColor());
         txtSearch.setShowClearButton(true);
         txtSearch.setLeadingIcon(iconTxtSearch);
@@ -466,36 +449,37 @@ public class ViewProducerController extends ViewProducer {
     }
 
     private void deleteProducer() {
-    	var row = tableListProducer.getSelectedRow();
+        var row = tableListProducer.getSelectedRow();
         modelListProducer.remove(row);
 
-    	if (tableListProducer.getRowCount() > 0) {
-    		if (row > 0) {
-    			row -= 1;
-    		}
-    		tableListProducer.changeSelection(row, 0, false, false);
-    		showProducer();
+        if (tableListProducer.getRowCount() > 0) {
+            if (row > 0) {
+                row -= 1;
+            }
+            tableListProducer.changeSelection(row, 0, false, false);
+            showProducer();
 
-    	} else {
-    		tabbedPane.setVisible(false);
-    	}
-    	tableListProducer.updateUI();
+        } else {
+            tabbedPane.setVisible(false);
+        }
+        tableListProducer.updateUI();
     }
 
     private void updateProducer() {
-    	buildMessageCommandDto(modelListProducer.get(rowTableListProducerShowed));
-    	produtcerDataShowedUpdated = true;
+        buildMessageCommandDto(modelListProducer.get(rowTableListProducerShowed));
+        produtcerDataShowedUpdated = true;
     }
 
     private void filterTopics() {
-    	final var text = txtComboTopic.getText();
-    	final var filters = text.split(" ");
+        final var text = txtComboTopic.getText();
+        final var filters = text.split(" ");
 
-    	List<String> filteredTopics = listTopicUseCase.execute().stream()
-    			.map(Topic::getId)
-    			.map(TopicID::getValue)
-    			.filter(item -> Arrays.stream(filters).allMatch(filter -> item.toLowerCase().contains(filter.toLowerCase())))
-    			.sorted(Comparable::compareTo)
+        List<String> filteredTopics = listTopicUseCase.execute().stream()
+                .map(Topic::getId)
+                .map(TopicID::getValue)
+                .filter(item -> Arrays.stream(filters)
+                        .allMatch(filter -> item.toLowerCase().contains(filter.toLowerCase())))
+                .sorted(Comparable::compareTo)
                 .collect(Collectors.toList());
 
         comboTopic.removeAllItems();
@@ -505,17 +489,18 @@ public class ViewProducerController extends ViewProducer {
     }
 
     private void filterTableListProduces() {
-    	if (TRUE.equals(isProducerDataUpdated())) {
-	    	final var text = txtSearch.getText();
-	    	final var filters = text.split(" ");
+        if (TRUE.equals(isProducerDataUpdated())) {
+            final var text = txtSearch.getText();
+            final var filters = text.split(" ");
 
-	    	for (int i = 0; i < modelListProducer.getData().size(); i++) {
-	    		var description = modelListProducer.getData().get(i).getDescription();
-				if (Arrays.stream(filters).allMatch(filter -> description.toLowerCase().contains(filter.toLowerCase()))) {
-					tableListProducer.changeSelection(i, 0, false, false);
-					break;
-				}
-			}
-    	}
+            for (int i = 0; i < modelListProducer.getData().size(); i++) {
+                var description = modelListProducer.getData().get(i).getDescription();
+                if (Arrays.stream(filters)
+                        .allMatch(filter -> description.toLowerCase().contains(filter.toLowerCase()))) {
+                    tableListProducer.changeSelection(i, 0, false, false);
+                    break;
+                }
+            }
+        }
     }
 }
