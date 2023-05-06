@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -19,6 +20,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
@@ -49,7 +51,20 @@ public class MessageGatewayImpl implements MessageGateway {
 
         final var producerRecord = new ProducerRecord<>(topicName, null, null, key,
             messageContent, headerList);
-        kafkaProducer.send(producerRecord);
+
+        final RecordMetadata recordMetadata;
+        try {
+            recordMetadata = kafkaProducer.send(producerRecord).get();
+            final var offset = recordMetadata.offset();
+
+            message = Message.with(key, topicName, messageContent, headers, LocalDateTime.now(),
+                offset);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+
         return message;
     }
 
