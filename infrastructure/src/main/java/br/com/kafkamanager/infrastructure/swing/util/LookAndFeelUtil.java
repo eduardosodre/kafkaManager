@@ -2,16 +2,16 @@ package br.com.kafkamanager.infrastructure.swing.util;
 
 import static com.formdev.flatlaf.FlatLaf.registerCustomDefaultsSource;
 
-import com.formdev.flatlaf.FlatDarkLaf;
+import br.com.kafkamanager.infrastructure.swing.themes.ThemeType;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class LookAndFeelUtil {
 
-    public static void startLookAndFeel() {
+    public static void startLookAndFeel(String themeName) {
         try {
             registerCustomDefaultsSource("themes");
-            FlatDarkLaf.setup();
+            ThemeType.startTheme(themeName);
         } catch (Exception e) {
             e.printStackTrace();
         }

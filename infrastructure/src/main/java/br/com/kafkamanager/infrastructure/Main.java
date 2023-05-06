@@ -1,5 +1,6 @@
 package br.com.kafkamanager.infrastructure;
 
+import br.com.kafkamanager.infrastructure.preference.UserPreferenceService;
 import br.com.kafkamanager.infrastructure.swing.ViewDashboardController;
 import br.com.kafkamanager.infrastructure.swing.ViewKafkaConfigController;
 import br.com.kafkamanager.infrastructure.swing.util.LookAndFeelUtil;
@@ -12,8 +13,10 @@ import org.springframework.core.env.MapPropertySource;
 public class Main {
 
     public static void main(String[] args) {
-        LookAndFeelUtil.startLookAndFeel();
-        final var server = new ViewKafkaConfigController().getServer();
+        final var preferenceDto = UserPreferenceService.getPreferences();
+        LookAndFeelUtil.startLookAndFeel(preferenceDto.getThemeName());
+
+        final var server = new ViewKafkaConfigController(preferenceDto.getKafkaServerUrl()).getServer();
 
         Map<String, Object> props = new HashMap<>();
         props.put("KAFKA_SERVER", server);

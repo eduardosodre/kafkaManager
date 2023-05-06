@@ -5,18 +5,14 @@ import br.com.kafkamanager.application.topic.list.ListTopicUseCase;
 import br.com.kafkamanager.domain.topic.Topic;
 import br.com.kafkamanager.domain.topic.TopicID;
 import br.com.kafkamanager.infrastructure.MyConfig;
+import br.com.kafkamanager.infrastructure.preference.UserPreference;
+import br.com.kafkamanager.infrastructure.preference.UserPreferenceService;
 import br.com.kafkamanager.infrastructure.swing.themes.ThemeType;
 import br.com.kafkamanager.infrastructure.swing.util.JOptionUtil;
 import br.com.kafkamanager.infrastructure.swing.util.SetupColor;
 import br.com.kafkamanager.infrastructure.util.ContextUtil;
-import com.formdev.flatlaf.FlatDarculaLaf;
-import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLaf;
-import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.formdev.flatlaf.themes.FlatMacDarkLaf;
-import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import com.formdev.flatlaf.ui.FlatUIUtils;
 import java.awt.Color;
 import java.awt.event.ItemEvent;
@@ -63,7 +59,7 @@ public class ViewDashboardController extends ViewDashboard {
         showTopics();
         showInfoConnection();
     }
-    
+
     private Color setupColorJContentPane() {
     	if (FlatLaf.isLafDark()) {
     		Color colorTheme = UIManager.getColor("Panel.background");
@@ -92,6 +88,9 @@ public class ViewDashboardController extends ViewDashboard {
     }
 
     private void closingProgram() {
+        var server = Optional.ofNullable(myConfig).map(MyConfig::getServer).orElse("localhost:9092");
+        UserPreferenceService.savePreferences(new UserPreference(server, comboTheme.getSelectedItem().toString()));
+
         final var kafkaProducer = ContextUtil.getBean(KafkaProducer.class);
         final var kafkaAdminClient = ContextUtil.getBean(AdminClient.class);
         final var kafkaConsumer = ContextUtil.getBean(KafkaConsumer.class);
@@ -197,30 +196,18 @@ public class ViewDashboardController extends ViewDashboard {
         if (e.getStateChange() == ItemEvent.SELECTED) {
             String selectedTheme = comboTheme.getSelectedItem().toString();
 
-            if (ThemeType.DARK.description.equals(selectedTheme)) {
-                FlatDarkLaf.setup();
-            } else if (ThemeType.LIGHT.description.equals(selectedTheme)) {
-                FlatLightLaf.setup();
-            } else if (ThemeType.INTELLIJ.description.equals(selectedTheme)) {
-                FlatIntelliJLaf.setup();
-            } else if (ThemeType.DARCULA.description.equals(selectedTheme)) {
-                FlatDarculaLaf.setup();
-            } else if (ThemeType.MAC_DARK.description.equals(selectedTheme)) {
-                FlatMacDarkLaf.setup();
-            } else if (ThemeType.MAC_LIGHT.description.equals(selectedTheme)) {
-                FlatMacLightLaf.setup();
-            }
-            
+            ThemeType.startTheme(selectedTheme);
+
             jContentPane.setBackground(setupColorJContentPane());
             FlatLaf.updateUI();
         }
     }
 
-    private void setupIcons() {    	
+    private void setupIcons() {
     	var iconLbIcon = new FlatSVGIcon("icons/apache_kafka-icon.svg", 30, 30, getClass().getClassLoader());
 		iconLbIcon.setColorFilter(SetupColor.getIconColor());
         lbLogoIcon.setIcon(iconLbIcon);
-    	
+
     	var iconLbMenuItemTopicIcon = new FlatSVGIcon(getClass().getClassLoader().getResource("icons/servers_icon.svg"));
         iconLbMenuItemTopicIcon.setColorFilter(SetupColor.getIconColor());
         lbMenuItemTopicIcon.setIcon(iconLbMenuItemTopicIcon);
@@ -232,7 +219,7 @@ public class ViewDashboardController extends ViewDashboard {
         var iconBtnConsumer = new FlatSVGIcon("icons/mail_download_line_email_icon.svg", 20, 20, getClass().getClassLoader());
         iconBtnConsumer.setColorFilter(SetupColor.getIconColor());
         btnConsumer.setIcon(iconBtnConsumer);
-        
+
         var iconBtnUpdate = new FlatSVGIcon("icons/reload_icon.svg", 20, 20, getClass().getClassLoader());
         iconBtnUpdate.setColorFilter(SetupColor.getIconColor());
         btnUpdate.setIcon(iconBtnUpdate);
@@ -254,7 +241,7 @@ public class ViewDashboardController extends ViewDashboard {
         txtSearch.setShowClearButton(true);
         txtSearch.setLeadingIcon(iconTxtSearch);
     }
-    
+
     private void showInfoConnection( ) {
     	String server = Optional.ofNullable(myConfig).map(MyConfig::getServer).orElse("");
     	lbInfoConnection.setText(server);

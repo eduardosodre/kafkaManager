@@ -7,8 +7,9 @@ public class ViewKafkaConfigController extends ViewKafkaConfig {
 
     private String server;
 
-    public ViewKafkaConfigController() {
+    public ViewKafkaConfigController(String kafkaServerUrl) {
         start();
+        txtServer.setText(kafkaServerUrl);
         setVisible(true);
     }
 
