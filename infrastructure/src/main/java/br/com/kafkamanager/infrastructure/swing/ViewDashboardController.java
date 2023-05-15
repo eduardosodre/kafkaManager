@@ -94,11 +94,13 @@ public class ViewDashboardController extends ViewDashboard {
 
         final var kafkaProducer = ContextUtil.getBean(KafkaProducer.class);
         final var kafkaAdminClient = ContextUtil.getBean(AdminClient.class);
-        final var kafkaConsumer = ContextUtil.getBean(KafkaConsumer.class);
+        final var kafkaConsumerList = ContextUtil.getBean(MyConfig.KAFKA_CONSUMER_MESSAGE_GATEWAY, KafkaConsumer.class);
+        final var kafkaConsumerOffset = ContextUtil.getBean(MyConfig.KAFKA_CONSUMER_TOPIC_GATEWAY, KafkaConsumer.class);
 
         kafkaProducer.close();
         kafkaAdminClient.close();
-        kafkaConsumer.close();
+        kafkaConsumerList.close();
+        kafkaConsumerOffset.close();
 
         System.exit(0);
     }
@@ -146,14 +148,7 @@ public class ViewDashboardController extends ViewDashboard {
     }
 
     private void consumer() {
-        final Integer selected = getSelectedRow();
-        if (selected == null) {
-            return;
-        }
-        final var topicName = table.getValueAt(selected, 0).toString();
-        listTopics.stream()
-            .filter(topic -> topic.getId().getValue().equalsIgnoreCase(topicName)).findFirst()
-            .ifPresent(ViewConsumerController::new);
+        new ViewConsumerController();
     }
 
     private void producer() {
