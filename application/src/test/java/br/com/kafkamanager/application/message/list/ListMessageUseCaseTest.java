@@ -10,6 +10,7 @@ import br.com.kafkamanager.domain.message.Message;
 import br.com.kafkamanager.domain.message.MessageFilter;
 import br.com.kafkamanager.domain.message.MessageGateway;
 import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -28,10 +29,10 @@ class ListMessageUseCaseTest extends UseCaseTest {
         messages.add(Message.with("key", "topic", "mensagem 1", null));
         messages.add(Message.with("key2", "topic", "mensagem 2", null));
 
-        when(gateway.list(any(MessageFilter.class))).thenReturn(messages);
+        when(gateway.list(any())).thenReturn(messages);
 
         final var filter = new MessageFilter("topic", 0, 0L, 0L);
-        final var result = useCase.execute(filter);
+        final var result = useCase.execute(List.of(filter));
 
         assertEquals(messages, result);
         verify(gateway).list(any());

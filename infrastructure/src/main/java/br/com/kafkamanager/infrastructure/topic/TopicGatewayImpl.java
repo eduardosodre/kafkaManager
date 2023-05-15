@@ -1,5 +1,7 @@
 package br.com.kafkamanager.infrastructure.topic;
 
+import static br.com.kafkamanager.infrastructure.MyConfig.KAFKA_CONSUMER_TOPIC_GATEWAY;
+
 import br.com.kafkamanager.domain.topic.Topic;
 import br.com.kafkamanager.domain.topic.TopicGateway;
 import br.com.kafkamanager.domain.topic.TopicID;
@@ -8,18 +10,27 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import lombok.RequiredArgsConstructor;
-import org.apache.kafka.clients.admin.*;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.DeleteTopicsOptions;
+import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.admin.TopicDescription;
+import org.apache.kafka.clients.admin.TopicListing;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class TopicGatewayImpl implements TopicGateway {
 
     private final AdminClient kafkaAdminClient;
     private final KafkaConsumer<String, String> kafkaConsumer;
+
+    public TopicGatewayImpl(AdminClient kafkaAdminClient,
+            @Qualifier(KAFKA_CONSUMER_TOPIC_GATEWAY) KafkaConsumer<String, String> kafkaConsumer) {
+        this.kafkaAdminClient = kafkaAdminClient;
+        this.kafkaConsumer = kafkaConsumer;
+    }
 
     @Override
     public Topic create(Topic topic) {

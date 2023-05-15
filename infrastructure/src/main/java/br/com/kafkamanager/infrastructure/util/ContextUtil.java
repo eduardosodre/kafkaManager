@@ -13,4 +13,8 @@ public class ContextUtil {
     public static <T> T getBean(Class<T> beanClass) {
         return context.getBean(beanClass);
     }
+
+    public static <T> T getBean(String qualifier, Class<T> beanClass) {
+        return context.getBean(qualifier, beanClass);
+    }
 }
