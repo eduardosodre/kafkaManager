@@ -1,7 +1,6 @@
 package br.com.kafkamanager.infrastructure.message;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -9,6 +8,7 @@ import static org.mockito.Mockito.when;
 import br.com.kafkamanager.domain.message.Message;
 import br.com.kafkamanager.domain.message.MessageFilter;
 import java.time.Duration;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +18,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -93,13 +94,30 @@ class MessageGatewayImplTest {
 
         when(kafkaConsumer.poll(Duration.ofMillis(100))).thenReturn(consumerRecords);
 
-        final var messages = gateway.list(filter);
+        final var messages = gateway.list(List.of(filter));
 
         Assertions.assertEquals(2, messages.size());
 
         verify(kafkaConsumer).assign(any());
-        verify(kafkaConsumer).seek(any(), anyLong());
         verify(kafkaConsumer).poll(Duration.ofMillis(100));
         verifyNoMoreInteractions(kafkaConsumer);
+    }
+
+    @Test
+    void shouldReturnEmptyListWhenNoMessagesAreConsumed() {
+        List<MessageFilter> filters = Collections.singletonList(
+                new MessageFilter("test_topic", null, 0L, 10L));
+
+        when(kafkaConsumer.partitionsFor("test_topic"))
+                .thenReturn(List.of(new PartitionInfo("test_topic", 0, null, null, null)));
+
+        when(kafkaConsumer.poll(Duration.ofMillis(100)))
+                .thenReturn(ConsumerRecords.empty());
+
+        MessageGatewayImpl messageGateway = new MessageGatewayImpl(kafkaProducer, kafkaConsumer);
+
+        List<Message> messages = messageGateway.list(filters);
+
+        Assertions.assertTrue(messages.isEmpty());
     }
 }

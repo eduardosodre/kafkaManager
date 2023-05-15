@@ -6,6 +6,6 @@ public interface MessageGateway {
 
     Message create(Message topic);
 
-    List<Message> list(MessageFilter filter);
+    List<Message> list(List<MessageFilter> filter);
 
 }

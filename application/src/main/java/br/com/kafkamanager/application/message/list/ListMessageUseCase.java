@@ -10,12 +10,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class ListMessageUseCase extends UseCase<MessageFilter, List<Message>> {
+public class ListMessageUseCase extends UseCase<List<MessageFilter>, List<Message>> {
 
     private final MessageGateway gateway;
 
     @Override
-    public List<Message> execute(MessageFilter filter) {
+    public List<Message> execute(List<MessageFilter> filter) {
         return gateway.list(filter);
     }
 }

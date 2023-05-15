@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -21,6 +22,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
@@ -50,7 +52,7 @@ public class MessageGatewayImpl implements MessageGateway {
         }
 
         final var producerRecord = new ProducerRecord<>(topicName, null, null, key,
-            messageContent, headerList);
+                messageContent, headerList);
 
         final RecordMetadata recordMetadata;
         try {
@@ -58,52 +60,63 @@ public class MessageGatewayImpl implements MessageGateway {
             final var offset = recordMetadata.offset();
 
             message = Message.with(key, topicName, messageContent, headers, LocalDateTime.now(),
-                offset);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
+                    offset, recordMetadata.partition());
+        } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
 
         return message;
     }
 
-    public List<Message> list(MessageFilter filter) {
+    public List<Message> list(List<MessageFilter> filters) {
         final var list = new ArrayList<Message>();
+        final Map<TopicPartition, Long> topicPartitions = new HashMap<>();
 
-        final var partition = new TopicPartition(filter.getTopicName(),
-            filter.getPartitionNumber());
+        for (MessageFilter filter : filters) {
+            if (filter.getPartitionNumber() >= 0) {
+                final var partition = new TopicPartition(filter.getTopicName(),
+                        filter.getPartitionNumber());
+                topicPartitions.put(partition, filter.getOffset());
 
-        final var partitions = Arrays.asList(partition);
-        consumer.assign(partitions);
-        consumer.seek(partition, filter.getOffset());
-
-        long limit = filter.getOffset() + filter.getLimit();
-
-        long count = 0;
-
-        while (true) {
-            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-            for (ConsumerRecord<String, String> record : records) {
-
-                final var headersMap = Arrays.stream(record.headers().toArray())
-                    .collect(Collectors.toMap(
-                        Header::key,
-                        header -> new String(header.value(), StandardCharsets.UTF_8)
-                    ));
-
-                final var message = Message.with(record.key(), filter.getTopicName(),
-                    record.value(),
-                    headersMap,
-                    LocalDateTime.ofInstant(Instant.ofEpochMilli(record.timestamp()),
-                        ZoneId.systemDefault()),
-                    record.offset());
-                list.add(message);
-                count++;
+            } else {
+                final var topicName = filter.getTopicName();
+                final var partitions = consumer.partitionsFor(topicName);
+                for (PartitionInfo partitionInfo : partitions) {
+                    final var partition = new TopicPartition(topicName, partitionInfo.partition());
+                    topicPartitions.put(partition, filter.getOffset());
+                }
             }
+        }
 
-            if (count >= limit || records.isEmpty()) {
-                break;
+        consumer.assign(topicPartitions.keySet());
+
+        for (Map.Entry<TopicPartition, Long> entry : topicPartitions.entrySet()) {
+            long count = 0;
+            long limit = entry.getValue() + filters.get(0).getLimit();
+            while (true) {
+                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+                for (ConsumerRecord<String, String> record : records) {
+
+                    final var headersMap = Arrays.stream(record.headers().toArray())
+                            .collect(Collectors.toMap(
+                                    Header::key,
+                                    header -> new String(header.value(), StandardCharsets.UTF_8)
+                            ));
+
+                    final var message = Message.with(record.key(), record.topic(),
+                            record.value(),
+                            headersMap,
+                            LocalDateTime.ofInstant(Instant.ofEpochMilli(record.timestamp()),
+                                    ZoneId.systemDefault()),
+                            record.offset(),
+                            record.partition());
+                    list.add(message);
+                    count++;
+                }
+
+                if (count >= limit || records.isEmpty()) {
+                    break;
+                }
             }
         }
         return list;
