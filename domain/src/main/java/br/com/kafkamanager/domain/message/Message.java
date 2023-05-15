@@ -18,27 +18,30 @@ public class Message extends Entity<MessageID> {
     private final Map<String, String> headers;
     private final LocalDateTime timestamp;
     private final Long offset;
+    private final Integer partition;
 
     private Message(MessageID messageID, String topicName, String message,
-        Map<String, String> headers, LocalDateTime timestamp, Long offset) {
+            Map<String, String> headers, LocalDateTime timestamp, Long offset, Integer partition) {
         super(messageID);
         this.topicName = topicName;
         this.message = message;
         this.headers = headers;
         this.timestamp = timestamp;
         this.offset = offset;
+        this.partition = partition;
         selfValidate();
     }
 
     public static Message with(String key, String topicName, String message,
-        Map<String, String> headers) {
+            Map<String, String> headers) {
         return new Message(MessageID.from(key), topicName, message, headers, LocalDateTime.now(),
-            0l);
+                0l, 0);
     }
 
     public static Message with(String key, String topicName, String message,
-        Map<String, String> headers, LocalDateTime timestamp, Long offset) {
-        return new Message(MessageID.from(key), topicName, message, headers, timestamp, offset);
+            Map<String, String> headers, LocalDateTime timestamp, Long offset, Integer partition) {
+        return new Message(MessageID.from(key), topicName, message, headers, timestamp, offset,
+                partition);
     }
 
     private void selfValidate() {
