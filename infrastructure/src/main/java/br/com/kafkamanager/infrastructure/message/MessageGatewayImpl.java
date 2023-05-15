@@ -1,5 +1,7 @@
 package br.com.kafkamanager.infrastructure.message;
 
+import static br.com.kafkamanager.infrastructure.MyConfig.KAFKA_CONSUMER_MESSAGE_GATEWAY;
+
 import br.com.kafkamanager.domain.message.Message;
 import br.com.kafkamanager.domain.message.MessageFilter;
 import br.com.kafkamanager.domain.message.MessageGateway;
@@ -15,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -26,14 +27,20 @@ import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class MessageGatewayImpl implements MessageGateway {
 
     private final KafkaProducer<String, String> kafkaProducer;
     private final KafkaConsumer<String, String> consumer;
+
+    public MessageGatewayImpl(KafkaProducer<String, String> kafkaProducer,
+            @Qualifier(KAFKA_CONSUMER_MESSAGE_GATEWAY) KafkaConsumer<String, String> consumer) {
+        this.kafkaProducer = kafkaProducer;
+        this.consumer = consumer;
+    }
 
     @Override
     public Message create(Message message) {

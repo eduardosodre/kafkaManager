@@ -18,6 +18,9 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 public class MyConfig {
 
+    public static final String KAFKA_CONSUMER_MESSAGE_GATEWAY = "kafkaConsumerMessageGateway";
+    public static final String KAFKA_CONSUMER_TOPIC_GATEWAY = "kafkaConsumerTopicGateway";
+
     @Value("${KAFKA_SERVER}")
     private String server;
 
@@ -31,13 +34,16 @@ public class MyConfig {
         return new KafkaProducer<>(props);
     }
 
-    @Bean
-    public KafkaConsumer<String, String> kafkaConsumer() {
-        final var props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, server);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "my-group");
-        props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+    @Bean(name = KAFKA_CONSUMER_MESSAGE_GATEWAY)
+    public KafkaConsumer<String, String> kafkaConsumerMessageGataway() {
+        final var props = buildPropertiesKafka();
+
+        return new KafkaConsumer<>(props);
+    }
+
+    @Bean(name = KAFKA_CONSUMER_TOPIC_GATEWAY)
+    public KafkaConsumer<String, String> kafkaConsumerTopicGateway() {
+        final var props = buildPropertiesKafka();
 
         return new KafkaConsumer<>(props);
     }
@@ -47,6 +53,16 @@ public class MyConfig {
         final var props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, server);
         return AdminClient.create(props);
+    }
+
+    private Properties buildPropertiesKafka() {
+        final var props = new Properties();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, server);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "my-group");
+        props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+
+        return props;
     }
 
 }
