@@ -201,6 +201,10 @@ public class ViewProducerController extends ViewProducer {
                 modelSentProducers.addRow(new Object[]{stringBuilder.toString()});
                 var verticalScrollBar = scrollPaneListProduced.getVerticalScrollBar();
                 verticalScrollBar.setValue(verticalScrollBar.getMaximum());
+                tableSentProducers.updateUI();
+                verticalScrollBar = scrollPaneListProduced.getVerticalScrollBar();
+                verticalScrollBar.setValue(verticalScrollBar.getMaximum());
+
             }
         } catch (NotificationException e) {
             JOptionPane.showMessageDialog(null,
@@ -215,6 +219,9 @@ public class ViewProducerController extends ViewProducer {
         }
         try {
             final var kafkaProducerDto = JsonUtil.readJsonFile(file, CreateMessageCommandDto.class);
+            if (Objects.isNull(kafkaProducerDto.getDescription().isBlank())) {
+                kafkaProducerDto.setDescription("*Description");
+            }
             modelListProducer.add(kafkaProducerDto);
         } catch (FileNotFoundException e) {
             showMessageDialog(COULD_NOT_LOAD_FILE_MESSAGE);
@@ -359,12 +366,12 @@ public class ViewProducerController extends ViewProducer {
 
                     if (Boolean.FALSE.equals(toString.isEmpty()) && !toString.equals(p.toString())) {
                         modelListProducer.setValueAt("*" + p.getDescription().replace("*", ""),
-                                tableListProducer.getSelectedRow(), 0);
+                                rowTableListProducerShowed, 0);
                         p.setDescription("*" + p.getDescription().replace("*", ""));
                     }
                     return p;
                 })
-                .orElse(CreateMessageCommandDto.of("Description", keyProducer,
+                .orElse(CreateMessageCommandDto.of("*Description", keyProducer,
                         String.valueOf(comboTopic.getSelectedItem()),
                         txtValue.getText().strip(), map, new ArrayList<>(), null));
     }

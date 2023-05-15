@@ -38,7 +38,6 @@ public class MyTableModel<E> extends DefaultTableModel {
     }
 
     public void add(E obj) {
-        data.add(obj);
         Object[] row = new Object[fields.size()];
         for (int i = 0; i < fields.size(); i++) {
             try {
@@ -48,6 +47,7 @@ public class MyTableModel<E> extends DefaultTableModel {
             }
         }
         addRow(row);
+        data.add(obj);
     }
 
     public E get(int row) throws IndexOutOfBoundsException {

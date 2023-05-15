@@ -43,4 +43,9 @@ public class Topic extends Entity<TopicID> implements Comparable<Topic> {
     public int compareTo(Topic topic) {
         return this.id.getValue().compareTo(topic.getId().getValue());
     }
+
+    @Override
+    public String toString() {
+        return this.id.getValue();
+    }
 }

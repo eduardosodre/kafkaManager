@@ -4,10 +4,12 @@ import br.com.kafkamanager.domain.ValueObject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@ToString
 public class MessageFilter extends ValueObject {
 
     private String topicName;
