@@ -2,7 +2,6 @@ package br.com.kafkamanager.infrastructure.swing;
 
 import static javax.swing.SwingConstants.TOP;
 
-import br.com.kafkamanager.domain.topic.Topic;
 import br.com.kafkamanager.infrastructure.swing.util.TransparentJPanel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -40,7 +39,7 @@ public class ViewConsumer extends JFrame {
     protected JTabbedPane tabbedPane;
     protected JPanel panelSetup;
     protected JPanel panelSetupHeader;
-    protected JComboBox<Topic> comboTopic;
+    protected JComboBox<String> comboTopic;
     protected JScrollPane scrollPaneListConsumers;
     protected JButton btnStart;
     protected JTable tableListConsumers;
@@ -223,10 +222,11 @@ public class ViewConsumer extends JFrame {
         return panelSetupHeader;
     }
 
-    private JComboBox<Topic> getComboTopic() {
+    private JComboBox<String> getComboTopic() {
         if (comboTopic == null) {
             comboTopic = new JComboBox<>();
             comboTopic.setBounds(10, 11, 230, 25);
+            comboTopic.setEditable(true);
         }
         return comboTopic;
     }

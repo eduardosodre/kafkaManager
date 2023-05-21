@@ -23,7 +23,6 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
@@ -77,29 +76,20 @@ public class MessageGatewayImpl implements MessageGateway {
 
     public List<Message> list(List<MessageFilter> filters) {
         final var list = new ArrayList<Message>();
-        final Map<TopicPartition, Long> topicPartitions = new HashMap<>();
+        final Map<TopicPartition, MessageFilter> topicPartitions = new HashMap<>();
 
         for (MessageFilter filter : filters) {
-            if (filter.getPartitionNumber() >= 0) {
-                final var partition = new TopicPartition(filter.getTopicName(),
-                        filter.getPartitionNumber());
-                topicPartitions.put(partition, filter.getOffset());
-
-            } else {
-                final var topicName = filter.getTopicName();
-                final var partitions = consumer.partitionsFor(topicName);
-                for (PartitionInfo partitionInfo : partitions) {
-                    final var partition = new TopicPartition(topicName, partitionInfo.partition());
-                    topicPartitions.put(partition, filter.getOffset());
-                }
-            }
+            final var partition = new TopicPartition(filter.getTopicName(),
+                    filter.getPartitionNumber());
+            topicPartitions.put(partition, filter);
         }
 
         consumer.assign(topicPartitions.keySet());
 
-        for (Map.Entry<TopicPartition, Long> entry : topicPartitions.entrySet()) {
+        for (Map.Entry<TopicPartition, MessageFilter> entry : topicPartitions.entrySet()) {
+            consumer.seek(entry.getKey(), entry.getValue().getOffset());
             long count = 0;
-            long limit = entry.getValue() + filters.get(0).getLimit();
+            long limit = entry.getValue().getOffset() + entry.getValue().getLimit();
             while (true) {
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
                 for (ConsumerRecord<String, String> record : records) {
@@ -118,6 +108,10 @@ public class MessageGatewayImpl implements MessageGateway {
                             record.offset(),
                             record.partition());
                     list.add(message);
+                    filters.stream().filter(filter -> filter.getTopicName().equals(record.topic())
+                                    && filter.getPartitionNumber().equals(record.partition()))
+                            .findFirst()
+                            .ifPresent(filter -> filter.setOffset(record.offset() + 1));
                     count++;
                 }
 
