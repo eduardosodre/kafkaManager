@@ -10,6 +10,7 @@ import br.com.kafkamanager.application.topic.offset.GetOffsetCommand;
 import br.com.kafkamanager.domain.message.Message;
 import br.com.kafkamanager.domain.message.MessageFilter;
 import br.com.kafkamanager.domain.topic.Topic;
+import br.com.kafkamanager.domain.topic.TopicID;
 import br.com.kafkamanager.infrastructure.message.ConsumerDto;
 import br.com.kafkamanager.infrastructure.swing.util.HeaderParser;
 import br.com.kafkamanager.infrastructure.swing.util.MonochromeTableCellRenderer;
@@ -18,7 +19,8 @@ import br.com.kafkamanager.infrastructure.swing.util.SetupColor;
 import br.com.kafkamanager.infrastructure.util.ContextUtil;
 import br.com.kafkamanager.infrastructure.util.JsonUtil;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import java.awt.Component;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -26,15 +28,16 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.Optional;
+import java.util.TreeSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
@@ -45,6 +48,7 @@ public class ViewConsumerController extends ViewConsumer {
             "Headers", "Partition"};
     private static final String CANNOT_REMOVE_CONSUMER_BECAUSE_IS_RUNNING = "Cannot remove Consumer because it is running";
     public static final String ITEM_ALL_PARTITIONS = "All";
+    public static final String CANNOT_RUN_BECAUSE_NO_CONSUMER_HAS_BEEN_SELECTED = "Cannot run because no Consumer has been selected";
     private final ListMessageUseCase listMessageUseCase;
     private final ListTopicUseCase listTopicUseCase;
     private final GetLastOffsetTopicUseCase getLastOffsetTopicUseCase;
@@ -56,6 +60,7 @@ public class ViewConsumerController extends ViewConsumer {
     private ScheduledExecutorService schedulerRuntime;
     private Thread threadMessage;
     private boolean schedulerMessage = true;
+    private Topic topicSelected;
 
     public ViewConsumerController() {
         super();
@@ -68,41 +73,59 @@ public class ViewConsumerController extends ViewConsumer {
     }
 
     private void start() {
+        initializeTopics();
         setupIcons();
         initializeListeners();
         createTable();
         createTableListConsumer();
     }
 
+    private void initializeTopics() {
+        final var topics = new TreeSet<>(listTopicUseCase.execute());
+        topics.stream().map(Topic::getId)
+                .map(TopicID::getValue)
+                .forEach(comboTopic::addItem);
+    }
+
     private void showOffset(ItemEvent e) {
-        CompletableFuture.runAsync(() -> {
             if (e.getStateChange() == ItemEvent.SELECTED && txtPartition.getSelectedIndex() > 0) {
-                panelOffset.setVisible(true);
-                final var topic = (Topic) comboTopic.getSelectedItem();
+            panelOffset.setVisible(true);
+            getTopic().ifPresent(topic -> {
                 final var offsetCommand = GetOffsetCommand.of(topic,
-                        txtPartition.getSelectedIndex());
+                        txtPartition.getSelectedIndex() - 1);
                 final var firstOffset = getFirstOffsetTopicUseCase.execute(offsetCommand);
                 final var offsetString = String.format("First Offset: %d - Last Offset: %d",
                         firstOffset,
                         getLastOffsetTopicUseCase.execute(offsetCommand));
                 lbOffset.setText(offsetString);
                 txtOffset.setText(String.valueOf(firstOffset));
+            });
+
+        } else {
+            panelOffset.setVisible(false);
+        }
+    }
+
+    private void populatePartitions() {
+        txtPartition.removeAllItems();
+        txtPartition.addItem(ITEM_ALL_PARTITIONS);
+        getTopic().ifPresent(topic -> {
+            for (int i = 0; i < topic.getPartitions(); i++) {
+                txtPartition.addItem(String.valueOf(i));
             }
+            txtPartition.setSelectedIndex(0);
         });
     }
 
-    private void populatePartitions(ItemEvent e) {
-        CompletableFuture.runAsync(() -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-                txtPartition.removeAllItems();
-                final var topic = (Topic) e.getItem();
-                txtPartition.addItem(ITEM_ALL_PARTITIONS);
-                for (int i = 0; i < topic.getPartitions(); i++) {
-                    txtPartition.addItem(String.valueOf(i));
-                }
-                txtPartition.setSelectedIndex(0);
-            }
-        });
+    private Optional<Topic> getTopic() {
+        final var nameTopic = comboTopic.getSelectedItem().toString();
+        return Optional.ofNullable(topicSelected)
+                .filter(topic -> topic.getId().getValue()
+                        .equals(comboTopic.getSelectedItem().toString()))
+                .map(Optional::of)
+                .orElse(new TreeSet<>(listTopicUseCase.execute()).stream()
+                        .filter(topic -> topic.getId().getValue().equals(nameTopic))
+                        .findFirst());
     }
 
     private void initializeListeners() {
@@ -121,24 +144,12 @@ public class ViewConsumerController extends ViewConsumer {
             }
         });
 
-        txtPartition.addItemListener(this::showOffset);
-
-        listTopicUseCase.execute().forEach(comboTopic::addItem);
-        comboTopic.setEditable(true);
-        comboTopic.setRenderer(new DefaultListCellRenderer() {
+        comboTopic.addFocusListener(new FocusAdapter() {
             @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                    boolean isSelected, boolean cellHasFocus) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value instanceof Topic) {
-                    setText(((Topic) value).getId().getValue());
-                }
-                return this;
+            public void focusLost(FocusEvent e) {
+                populatePartitions();
             }
         });
-        comboTopic.addItemListener(this::populatePartitions);
-        comboTopic.setSelectedIndex(1);
-        comboTopic.setSelectedIndex(0);
         txtComboTopic = (JTextField) comboTopic.getEditor().getEditorComponent();
         txtComboTopic.addKeyListener(new KeyAdapter() {
             @Override
@@ -146,6 +157,14 @@ public class ViewConsumerController extends ViewConsumer {
                 filterTopics();
             }
         });
+        txtComboTopic.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                populatePartitions();
+            }
+        });
+
+        txtPartition.addItemListener(this::showOffset);
 
         btnPlus.addActionListener(e -> createConsumer());
         btnSubtract.addActionListener(e -> subtractConsumer());
@@ -181,14 +200,25 @@ public class ViewConsumerController extends ViewConsumer {
         table.getColumnModel().getColumn(5).setPreferredWidth(65);
     }
 
-
-    public MessageFilter buildMessageFilter() {
-        final var topic = (Topic) comboTopic.getSelectedItem();
+    public List<MessageFilter> buildMessageFilter(Topic topic) {
+        var messageFilters = new ArrayList<MessageFilter>();
         final var topicName = topic.getId().getValue();
-        final var partition = txtPartition.getSelectedIndex() - 1;
+        final var partitionSelected = txtPartition.getSelectedIndex() - 1;
         final var offset = Long.valueOf(txtOffset.getText());
         final var limit = 100L;
-        return new MessageFilter(topicName, partition, offset, limit);
+
+        if (partitionSelected < 0) {
+            for (int partition = 0; partition < topic.getPartitions(); partition++) {
+                final var offsetCommand = GetOffsetCommand.of(topic, partition);
+                messageFilters.add(new MessageFilter(topicName, partition,
+                        getLastOffsetTopicUseCase.execute(offsetCommand), limit));
+            }
+
+        } else {
+            messageFilters.add(new MessageFilter(topicName, partitionSelected, offset, limit));
+        }
+
+        return messageFilters;
     }
 
     private void populateMessageTable(List<Message> listMessages) {
@@ -206,15 +236,17 @@ public class ViewConsumerController extends ViewConsumer {
         final var text = txtComboTopic.getText();
         final var filters = text.split(" ");
 
-        List<Topic> filteredTopics = listTopicUseCase.execute().stream()
+        List<Topic> filteredTopics = new TreeSet<>(listTopicUseCase.execute()).stream()
                 .filter(topic -> Arrays.stream(filters)
                         .allMatch(filter -> topic.getId().getValue().toLowerCase()
                                 .contains(filter.toLowerCase())))
-                .sorted(Comparable::compareTo)
                 .collect(Collectors.toList());
 
         comboTopic.removeAllItems();
-        filteredTopics.forEach(comboTopic::addItem);
+        filteredTopics.stream()
+                .map(Topic::getId)
+                .map(TopicID::getValue)
+                .forEach(comboTopic::addItem);
         txtComboTopic.setText(text);
         comboTopic.setPopupVisible(true);
     }
@@ -227,7 +259,7 @@ public class ViewConsumerController extends ViewConsumer {
     private void showConsumer() {
         isShowingConsumer = true;
         final var consumer = modelListConsumer.get(tableListConsumers.getSelectedRow());
-        comboTopic.setSelectedItem(consumer.getTopic());
+        comboTopic.setSelectedItem(consumer.getTopic().getId().getValue());
         txtMessage.setText("");
         txtHeaders.setText("");
         lbRuntime.setText("Runtime: 0:00:00");
@@ -240,7 +272,15 @@ public class ViewConsumerController extends ViewConsumer {
             btnStart.setVisible(true);
             btnStop.setVisible(false);
         }
+        if (consumer.getMessageFilters().size() > 1) {
+            txtPartition.setSelectedIndex(0);
+        } else {
+            consumer.getListMessages().stream().findFirst()
+                    .ifPresent(message -> txtPartition.setSelectedItem(
+                            message.getPartition().toString()));
+        }
         isShowingConsumer = false;
+
     }
 
     private Boolean isConsumerDataUpdated() {
@@ -260,10 +300,11 @@ public class ViewConsumerController extends ViewConsumer {
     }
 
     private void createConsumer() {
-        final var messageFilter = buildMessageFilter();
-        final var consumerDto = new ConsumerDto((Topic) comboTopic.getSelectedItem(),
-                messageFilter);
-        modelListConsumer.add(consumerDto);
+        getTopic().ifPresent(topic -> {
+            final var messageFilters = buildMessageFilter(topic);
+            final var consumerDto = new ConsumerDto(topic, messageFilters);
+            modelListConsumer.add(consumerDto);
+        });
     }
 
     private void subtractConsumer() {
@@ -303,7 +344,12 @@ public class ViewConsumerController extends ViewConsumer {
     }
 
     private void startConsumer() {
-        final var consumer = modelListConsumer.get(tableListConsumers.getSelectedRow());
+        final int row = tableListConsumers.getSelectedRow();
+        if (row < 0) {
+            JOptionPane.showMessageDialog(this, CANNOT_RUN_BECAUSE_NO_CONSUMER_HAS_BEEN_SELECTED);
+            return;
+        }
+        final var consumer = modelListConsumer.get(row);
         consumer.start();
         startSchedulerMessage();
         btnStop.setVisible(true);
@@ -359,8 +405,10 @@ public class ViewConsumerController extends ViewConsumer {
                         schedulerMessage = false;
                     }
                     final var messageFilters = listConsumer.stream()
-                            .map(ConsumerDto::getMessageFilter)
+                            .map(ConsumerDto::getMessageFilters)
+                            .flatMap(Collection::stream)
                             .collect(Collectors.toList());
+
                     final List<Message> result = listMessageUseCase.execute(messageFilters);
 
                     result.stream()

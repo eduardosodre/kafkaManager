@@ -14,15 +14,15 @@ import lombok.Setter;
 public class ConsumerDto {
     private String id = String.valueOf(System.currentTimeMillis());
     private Topic topic;
-    private MessageFilter messageFilter;
+    private List<MessageFilter> messageFilters;
     private List<Message> listMessages = new ArrayList<>();
     private List<Message> listNewMessages = new ArrayList<>();
     private Instant startTime = Instant.now();
     private boolean running = false;
 
-    public ConsumerDto(Topic topic, MessageFilter messageFilter) {
+    public ConsumerDto(Topic topic, List<MessageFilter> messageFilters) {
         this.topic = topic;
-        this.messageFilter = messageFilter;
+        this.messageFilters = messageFilters;
     }
 
     public void start() {
