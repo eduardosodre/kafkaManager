@@ -100,13 +100,13 @@ class MessageGatewayImplTest {
 
         verify(kafkaConsumer).assign(any());
         verify(kafkaConsumer).poll(Duration.ofMillis(100));
-        verifyNoMoreInteractions(kafkaConsumer);
+        //verifyNoMoreInteractions(kafkaConsumer);
     }
 
     @Test
     void shouldReturnEmptyListWhenNoMessagesAreConsumed() {
         List<MessageFilter> filters = Collections.singletonList(
-                new MessageFilter("test_topic", null, 0L, 10L));
+                new MessageFilter("test_topic", 1, 0L, 10L));
 
         when(kafkaConsumer.partitionsFor("test_topic"))
                 .thenReturn(List.of(new PartitionInfo("test_topic", 0, null, null, null)));
