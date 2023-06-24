@@ -29,6 +29,7 @@ dependencies {
     implementation 'com.formdev:flatlaf:3.1.1'
     implementation 'com.formdev:flatlaf-extras:3.1.1'
 
+    implementation 'commons-cli:commons-cli:20040117.000000'
 
     testImplementation 'org.mockito:mockito-core:4.1.0'
     testImplementation 'org.mockito:mockito-junit-jupiter:4.1.0'

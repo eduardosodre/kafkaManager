@@ -7,6 +7,7 @@ import br.com.kafkamanager.application.topic.list.ListTopicUseCase;
 import br.com.kafkamanager.domain.exceptions.NotificationException;
 import br.com.kafkamanager.domain.topic.Topic;
 import br.com.kafkamanager.domain.topic.TopicID;
+import br.com.kafkamanager.infrastructure.Main;
 import br.com.kafkamanager.infrastructure.message.CreateMessageCommandDto;
 import br.com.kafkamanager.infrastructure.swing.util.HeaderParser;
 import br.com.kafkamanager.infrastructure.swing.util.JFileChooserUtil;
@@ -65,7 +66,7 @@ public class ViewProducerController extends ViewProducer {
     private DefaultTableModel modelSentProducers;
     private JTextField txtComboTopic;
     private int rowTableListProducerShowed;
-    private Boolean produtcerDataShowedUpdated = true;
+    private Boolean producerDataShowedUpdated = true;
 
     public ViewProducerController(String topicName) {
         super();
@@ -155,7 +156,7 @@ public class ViewProducerController extends ViewProducer {
         txtKey.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
-                produtcerDataShowedUpdated = false;
+                producerDataShowedUpdated = false;
             }
 
             @Override
@@ -233,7 +234,7 @@ public class ViewProducerController extends ViewProducer {
         Instant endTime = startTime.plus(Duration.ofMillis(500));
 
         while (Instant.now().isBefore(endTime)) {
-            if (TRUE.equals(produtcerDataShowedUpdated)) {
+            if (TRUE.equals(producerDataShowedUpdated)) {
                 return true;
             }
             try {
@@ -259,7 +260,7 @@ public class ViewProducerController extends ViewProducer {
     }
 
     private Set<String> listFiles() throws IOException {
-        File directory = new File("models");
+        File directory = new File(Main.folder);
         if (!directory.exists()) {
             directory.mkdir();
         }
@@ -479,7 +480,7 @@ public class ViewProducerController extends ViewProducer {
 
     private void updateProducer() {
         buildMessageCommandDto(modelListProducer.get(rowTableListProducerShowed));
-        produtcerDataShowedUpdated = true;
+        producerDataShowedUpdated = true;
     }
 
     private void filterTopics() {

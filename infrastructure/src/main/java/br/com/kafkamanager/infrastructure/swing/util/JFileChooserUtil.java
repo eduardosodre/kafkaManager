@@ -1,5 +1,6 @@
 package br.com.kafkamanager.infrastructure.swing.util;
 
+import br.com.kafkamanager.infrastructure.Main;
 import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -9,7 +10,7 @@ import lombok.experimental.UtilityClass;
 public class JFileChooserUtil {
 
     public static String chooseFile() {
-        File directory = new File("models");
+        File directory = new File(Main.folder);
         if (!directory.exists()) {
             directory.mkdir();
         }
