@@ -24,7 +24,7 @@ java -jar KafkaManager-1.0-SNAPSHOT-all.jar
 To run the application from a command line:
 
 ```
-./gradlew run --args="-form C:\test\models"
+./gradlew run --args="-folder C:\test\models"
 ```
 
 ## Conclusion
