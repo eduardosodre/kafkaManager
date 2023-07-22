@@ -31,3 +31,7 @@ To run the application from a command line:
 
 KafkaManager is a simple tool that can help users interact with Kafka. Its Clean Architecture
 structure allows for easy maintenance and scalability.
+
+
+### References
+* [Gradle - The JaCoCo Plugin](https://docs.gradle.org/8.0/userguide/jacoco_plugin.html)
