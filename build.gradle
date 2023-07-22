@@ -62,10 +62,7 @@ tasks.named('test').configure {
 }
 
 jacocoTestReport {
-    reports {
-        xml.enabled false
-        html.enabled true
-    }
+    dependsOn test
 }
 
 build.finalizedBy jacocoTestReport

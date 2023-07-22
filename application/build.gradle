@@ -27,7 +27,6 @@ dependencies {
 
 jacoco {
     toolVersion = "0.8.7"
-    reportsDir = file("$buildDir/jacoco")
 }
 
 test {
@@ -36,10 +35,7 @@ test {
 }
 
 jacocoTestReport {
-    reports {
-        xml.enabled false
-        html.enabled true
-    }
+    dependsOn test
 }
 
 build.finalizedBy jacocoTestReport
