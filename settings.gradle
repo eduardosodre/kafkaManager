@@ -1,4 +1,4 @@
-rootProject.name = 'KafkaManager'
+rootProject.name = 'kafkaManager'
 include 'domain'
 include 'application'
 include 'infrastructure'
