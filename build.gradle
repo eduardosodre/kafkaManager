@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'br.com.kafkamanager'
-version '1.0-SNAPSHOT'
+version '1.0'
 sourceCompatibility = 11
 
 repositories {
@@ -63,8 +63,12 @@ tasks.named('test').configure {
 
 jacocoTestReport {
     reports {
-        xml.enabled false
-        html.enabled true
+        xml {
+            enabled true
+        }
+        html {
+            enabled true
+        }
     }
 }
 
