@@ -1,0 +1,1 @@
+java -jar KafkaManager-1.0-all.jar
